@@ -1,11 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using QubicRed.CustomControls.Messenger;
+using SocketMessage = QubicRed.Components.QRSocket_Extras.SocketMessage;
 
 namespace QubicRed.Apps
 {
 	public partial class Messenger : QRDF
 	{
+		public UserInfo CurrentUser { get { return currentUser; } set { UpdateCurrentUser(value); } }
+		public UserInfo RecipientUser { get { return recipientUser; } set { UpdateRecipientUser(value); } }
+
+		private UserInfo currentUser = null;
+		private UserInfo recipientUser = null;
+		private FriendBlock SelectedFriend = null;
+		private FriendBlock SelectedChat = null;
+		private int ConversationID = -1;
+		private List<Conversation> Conversations = null;
+
+		protected Dictionary<string, string> PreDefinedMessage = new Dictionary<string, string>()
+		{
+			{ "SelectChat", "Select a chat from the left to begin..." },
+			{ "TypeRecipient", "Type a message to " }
+		};
+
 		public Messenger()
 		{
 			InitializeComponent();
@@ -14,16 +36,31 @@ namespace QubicRed.Apps
 			ChatButtonLabel.ForeColor = AppColor;
 			ChatButtonLabel.BackColor = PeopleButtonLabel.BackColor = Color.White;
 
-			ChatMessage.SelectionStart = 0;
-			ChatMessage.SelectionLength = 0;
+			ChatMessage.SelectionStart = ChatMessage.SelectionLength = 0;
+			InnerChatContainer.HorizontalScroll.Enabled = false;
 		}
 
 		private void Send()
 		{
+			if (CurrentUser == null || RecipientUser == null)
+				return;
 			string Message = ChatMessage.Text.Trim();
 			if (string.IsNullOrEmpty(Message))
 				return;
-			string data = "{Sender:\"Test\",Message:\"" + Message + "\"}";
+			if (Message == PreDefinedMessage["TypeRecipient"] + RecipientUser.UserName)
+				return;
+			SocketMessage msg = new SocketMessage(
+				new object[] { "ConversationID", ConversationID },
+				new object[] { "SenderID", CurrentUser.ID },
+				new object[] { "RecipientID", RecipientUser.ID },
+				new object[] { "Sender", CurrentUser.UserName },
+				new object[] { "Message", ChatMessage.Text.Trim() },
+				new object[] { "TimeStamp", DateTime.UtcNow.ToString("MM-dd-yyyy HH:mm:ss") },
+				new object[] { "DataType", 0}
+			);
+			ClientSocket.Send("message", msg);
+			ChatMessage.Text = PreDefinedMessage["TypeRecipient"] + RecipientUser.UserName;
+			ChatMessage.SelectionStart = ChatMessage.SelectionLength = 0;
 		}
 
 		private void ToggleEmojis() { }
@@ -31,6 +68,221 @@ namespace QubicRed.Apps
 		private void AttachFile() { }
 
 		private void VoiceInput() { }
+
+		private void ResizeChat()
+		{
+			if (InnerChatContainer.Controls.Count <= 0)
+				return;
+			if (CurrentUser == null)
+				return;
+			if (RecipientUser == null)
+				return;
+
+			if (InvokeRequired)
+			{
+				Invoke(new MethodInvoker(() => { ResizeChat(); }));
+				return;
+			}
+
+			InnerChatContainer.AutoScrollPosition = new Point(0, 0);
+
+			int y = 5;
+			foreach (MessageBlock msg in InnerChatContainer.Controls.OfType<MessageBlock>())
+			{
+				int x = msg.Sender.ToLower() == CurrentUser.UserName.ToLower() ?
+				(InnerChatContainer.Width - msg.Width - 10) : 10;
+
+				Invoke(new MethodInvoker(() => { msg.Location = new Point(x, y); }));
+				y += msg.Height + 10;
+			}
+
+			InnerChatContainer.ScrollControlIntoView(InnerChatContainer.Controls[InnerChatContainer.Controls.Count - 1]);
+		}
+
+		private void Login()
+		{
+			LoginPleaseWait.Show();
+
+			string username = LoginUserName.Text;
+			string password = LoginPassWord.Text;
+
+			ClientSocket.Send("login", new SocketMessage(
+				new object[] { "UserName", username },
+				new object[] { "PassWord", password }));
+		}
+
+		private void LoginResult(object e)
+		{
+			SocketMessage msg = new SocketMessage(e);
+			object error = msg.GetValue("Error");
+			if (error != null)
+			{
+				return;
+			}
+			object id = msg.GetValue("ID");
+			int userID = -1;
+			if (id != null)
+				userID = int.Parse(id.ToString());
+			CurrentUser = new UserInfo(
+				userID,
+				msg.GetValue("UserName")?.ToString(),
+				msg.GetValue("RealName")?.ToString(),
+				msg.GetValue("Description")?.ToString(),
+				msg.GetValue("UserImage")?.ToString()
+			);
+			ClientSocket.Send("friendslist", new SocketMessage(new object[] { "UserName", CurrentUser.UserName }));
+		}
+
+		private void FriendsListResult(object e)
+		{
+			if(InvokeRequired)
+			{
+				Invoke(new MethodInvoker(() => { FriendsListResult(e); }));
+				return;
+			}
+
+			List<Friend> friendList = ExtJson.DeserializeToList<Friend>(JsonConvert.SerializeObject(e)).ToList();
+
+			//if (friendList.Count > 0)
+				//NoChatsLabel?.Dispose();
+
+			/*foreach (Friend friend in friendList)
+			{
+				UserInfo userInfo = new UserInfo(friend.FriendID, "UserName", "RealName", "Description", null);
+				FriendBlock block = new FriendBlock(userInfo, new Size(SideBarContainer.Width, 75));
+				block.AppColor = AppColor;
+
+				block.MouseClick += FriendBlock_MouseClick;
+
+				block.Location = new Point(0, SideBarContainer.Controls.Count * 75);
+				SideBarContainer.Controls.Add(block);
+			}*/
+
+			ClientSocket.Send("conversations", new SocketMessage(new object[] { "UserName", CurrentUser.UserName }));
+		}
+
+		private void ConversationsResult(object e)
+		{
+			if (InvokeRequired)
+			{
+				Invoke(new MethodInvoker(() => { ConversationsResult(e); }));
+				return;
+			}
+
+			Conversations = JsonConvert.SerializeObject(e).DeserializeToList<Conversation>().ToList();
+
+			if (Conversations.Count > 0)
+				NoChatsLabel?.Dispose();
+
+			foreach(Conversation conv in Conversations)
+			{
+				FriendBlock block = new FriendBlock(conv.Recipient, new Size(SideBarContainer.Width, 75));
+				block.AppColor = AppColor;
+				block.MouseClick += ConversationBlock_MouseClick;
+				block.Location = new Point(0, SideBarContainer.Controls.Count * 75);
+				SideBarContainer.Controls.Add(block);
+			}
+		}
+
+		private void UpdateCurrentUser(UserInfo e)
+		{
+			if (InvokeRequired)
+			{
+				Invoke(new MethodInvoker(() => { UpdateCurrentUser(e); }));
+				return;
+			}
+
+			currentUser = e;
+
+			UserName.Text = CurrentUser.UserName;
+			UserPicture.Image = CurrentUser.UserImage.DownloadImage(UserPicture.Size);
+
+			ViewProfileButton.Show();
+			LoginOverlay.Hide();
+
+			if (RecipientUser == null)
+				ChatMessage.Text = PreDefinedMessage["SelectChat"];
+			else
+				ChatMessage.Text = PreDefinedMessage["TypeRecipient"];
+		}
+
+		private void UpdateRecipientUser(UserInfo e)
+		{
+			recipientUser = e;
+
+			RecipientUserName.Text = recipientUser.UserName;
+			RecipientRealName.Text = recipientUser.RealName;
+			RecipientDescription.Text = recipientUser.Description;
+			RecipientImage.Image = recipientUser.UserImage.DownloadImage(RecipientImage.Size);
+
+			ChatMessage.Text = PreDefinedMessage["TypeRecipient"] + RecipientUser.UserName;
+			ChatMessage.SelectionLength = ChatMessage.SelectionStart = 0;
+
+			RecipientUserName.Location = new Point(RecipientRealName.Location.X + RecipientRealName.Width + 6, RecipientRealName.Location.Y);
+		}
+
+		private void FriendBlock_MouseClick(object sender, MouseEventArgs e)
+		{
+			FriendBlock block = sender as FriendBlock;
+
+			if (block == null)
+				return;
+			if (block == SelectedFriend)
+				return;
+
+			if(SelectedFriend != null)
+				SelectedFriend.Selected = false;
+
+			SelectedFriend = block;
+			SelectedFriend.Selected = true;
+		}
+
+		private void ConversationBlock_MouseClick(object sender, MouseEventArgs e)
+		{
+			FriendBlock block = sender as FriendBlock;
+
+			if (block == null)
+				return;
+			if (block == SelectedChat)
+				return;
+
+			if (SelectedChat != null)
+				SelectedChat.Selected = false;
+
+			SelectedChat = block;
+			SelectedChat.Selected = true;
+
+			RecipientUser = SelectedChat.User;
+			ChatInfo.Show();
+
+			if (NoChatSelectedLabel.IsDisposed)
+			{
+				Invoke(new MethodInvoker(() =>
+				{
+					InnerChatContainer.Controls.Clear();
+				}));
+			}
+
+			ConversationID = -1;
+
+			foreach (Reply reply in Conversations.Where(x => x.Recipient == RecipientUser).FirstOrDefault().Replies)
+			{
+				if (ConversationID == -1)
+					ConversationID = reply.ConversationID;
+
+				MessageBlock msgBlock = new MessageBlock();
+				msgBlock.Message = reply.Message;
+				msgBlock.Sender = reply.SenderID == CurrentUser.ID ? CurrentUser.UserName : RecipientUser.UserName;
+				msgBlock.Date = DateTime.Parse(reply.TimeStamp).ToString("h:mm tt");
+				msgBlock.MaximumSize = new Size(((InnerChatContainer.Width - 20) / 2) - 20, int.MaxValue);
+
+				Invoke(new MethodInvoker(() => { msgBlock.FormatSize(); InnerChatContainer.Controls.Add(msgBlock); }));
+			}
+
+			ResizeChat();
+
+			NoChatSelectedLabel?.Dispose();
+		}
 
 		private void Seperator_Paint(object sender, PaintEventArgs e)
 		{
@@ -46,16 +298,40 @@ namespace QubicRed.Apps
 		#region Chat Message
 		private void ChatMessage_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (ChatMessage.Text.StartsWith("Type a message to"))
+			if (RecipientUser == null)
+			{
+				e.SuppressKeyPress = true;
+				e.Handled = true;
+				return;
+			}
+			if (ChatMessage.Text == PreDefinedMessage["TypeRecipient"] + RecipientUser.UserName)
+			{
 				ChatMessage.Text = "";
+				ChatMessage.ForeColor = Color.Black;
+			}
 		}
 
 		private void ChatMessage_KeyUp(object sender, KeyEventArgs e)
 		{
 			if (ChatMessage.Text.Length == 0)
-				ChatMessage.Text = "Type a message to";
-			if(e.KeyCode == Keys.Enter)
+			{
+				if (RecipientUser == null)
+					ChatMessage.Text = PreDefinedMessage["SelectChat"];
+				else
+					ChatMessage.Text = PreDefinedMessage["TypeRecipient"] + RecipientUser.UserName;
+				ChatMessage.ForeColor = Color.FromArgb(150, 150, 150);
+			}
+			if (e.KeyCode == Keys.Enter)
 				Send();
+		}
+
+		private void ChatMessage_TextChanged(object sender, EventArgs e)
+		{
+			if (RecipientUser == null)
+			{
+				ChatMessage.Text = PreDefinedMessage["SelectChat"];
+				ChatMessage.SelectionStart = ChatMessage.SelectionLength = 0;
+			}
 		}
 		#endregion
 
@@ -153,6 +429,181 @@ namespace QubicRed.Apps
 		private void SideBarOptions_Paint(object sender, PaintEventArgs e)
 		{
 			e.Graphics.DrawLine(new Pen(Color.FromArgb(50, 0, 0, 0)), new Point(0, SideBarOptions.Height - 1), new Point(SideBarOptions.Width, SideBarOptions.Height - 1));
+		}
+
+		private void ClientSocket_OnMessagereceived(SocketMessage e)
+		{
+			string timeStamp = e.GetValue("TimeStamp").ToString();
+			timeStamp = DateTime.Parse(timeStamp).ToString("h:mm tt");
+
+			MessageBlock block = new MessageBlock();
+			block.Message = e.GetValue("Message").ToString();
+			block.Sender = e.GetValue("Sender").ToString();
+			block.Date = timeStamp;
+			block.MaximumSize = new Size(((InnerChatContainer.Width - 20) / 2) - 20, int.MaxValue);
+
+			Invoke(new MethodInvoker(() =>
+			{
+				block.FormatSize();
+				InnerChatContainer.Controls.Add(block);
+
+				SelectedChat.LastMessage = e.GetValue("Message").ToString();
+				SelectedChat.TimeStamp = timeStamp;
+			}));
+
+			ResizeChat();
+		}
+
+		private void ClientSocket_SocketEvent(Components.SocketEvent e)
+		{
+			switch (e.Name.ToLower())
+			{
+				case "connected":
+					if ((bool)e.Data)
+						ClientSocket.RegisterModule("messenger");
+					break;
+				case "login":
+					LoginResult(e.Data);
+					break;
+				case "friendslist":
+					FriendsListResult(e.Data);
+					break;
+				case "conversations":
+					ConversationsResult(e.Data);
+					break;
+			}
+		}
+
+		protected override void OnShown(EventArgs e)
+		{
+			ClientSocket.Init();
+
+			base.OnShown(e);
+		}
+
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+
+			if (IsHandleCreated)
+				ResizeChat();
+		}
+
+		private void LoginButton_MouseClick(object sender, MouseEventArgs e)
+		{
+			Login();
+		}
+
+		private void LoginClear_MouseClick(object sender, MouseEventArgs e)
+		{
+			LoginUserName.Text = "";
+			LoginPassWord.Text = "";
+			LoginUserName.Focus();
+		}
+
+		private void LoginOverlay_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+	}
+
+	public class UserInfo : IDisposable
+	{
+		public int ID { get; set; }
+		public string UserName { get; set; }
+		public string RealName { get; set; }
+		public string Description { get; set; }
+		public string UserImage { get; set; }
+
+		public UserInfo() { }
+		public UserInfo(int _id, string _username, string _realname, string _description, string _userimage)
+		{
+			ID = _id;
+			UserName = _username;
+			RealName = _realname;
+			Description = _description;
+			UserImage = _userimage;
+		}
+
+		#region Dispose
+		private bool disposed = false;
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposed)
+				return;
+
+			if (disposing)
+			{
+				ID = -1;
+				UserName = null;
+				RealName = null;
+				Description = null;
+				UserImage = null;
+			}
+
+			disposed = true;
+		}
+		~UserInfo()
+		{
+			Dispose(false);
+		}
+		#endregion
+	}
+
+	public class Friend
+	{
+		public int UserID { get; set; }
+		public int FriendID { get; set; }
+	}
+
+	public class Conversation
+	{
+		public UserInfo Recipient { get; set; }
+		public List<Reply> Replies { get; set; }
+	}
+
+	public class Reply
+	{
+		public int ID { get; set; }
+		public int ConversationID { get; set; }
+		public int SenderID { get; set; }
+		public int RecipientID { get; set; }
+		public string Message { get; set; }
+		public string TimeStamp { get; set; }
+		public int DataType { get; set; }
+		public UserInfo SenderInfo { get; set; }
+	}
+
+
+	public static class ExtJson
+	{
+		public static List<string> InvalidJsonElements;
+		public static IList<T> DeserializeToList<T>(this string jsonString)
+		{
+			InvalidJsonElements = null;
+			var array = JArray.Parse(jsonString);
+			IList<T> objectsList = new List<T>();
+
+			foreach (var item in array)
+			{
+				try
+				{
+					// CorrectElements
+					objectsList.Add(item.ToObject<T>());
+				}
+				catch (Exception ex)
+				{
+					InvalidJsonElements = InvalidJsonElements ?? new List<string>();
+					InvalidJsonElements.Add(item.ToString());
+				}
+			}
+
+			return objectsList;
 		}
 	}
 }

@@ -6,9 +6,20 @@ namespace QubicRed
 {
 	public partial class QRDF : Form
 	{
-		public new string Text { get { return Title.Text; }set { Title.Text = value; } }
+		public new string Text { get { return Title.Text; } set { Title.Text = value; } }
 
-		public Color AppColor { get { return HeaderBar.BackColor; } set { HeaderBar.BackColor = value; ExtendedBar.BackColor = Color.FromArgb(240, value); } }
+		public Color AppColor
+		{
+			get
+			{
+				return HeaderBar.BackColor;
+			}
+			set
+			{
+				HeaderBar.BackColor = value;
+				ExtendedBar.BackColor = Color.FromArgb(240, value);
+			}
+		}
 
 		protected bool canDragWindow = false;
 		protected Point dragStartPosition = new Point(-1, -1);
@@ -18,7 +29,6 @@ namespace QubicRed
 			InitializeComponent();
 		}
 
-		#region Header Buttons
 		#region Close Button
 		private void CloseButton_MouseClick(object sender, MouseEventArgs e)
 		{
@@ -99,7 +109,6 @@ namespace QubicRed
 		{
 			MinimizeButton.BackColor = Color.FromArgb(30, 255, 255, 255);
 		}
-		#endregion
 		#endregion
 
 		#region Header
