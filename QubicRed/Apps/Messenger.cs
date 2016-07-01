@@ -37,7 +37,6 @@ namespace QubicRed.Apps
 			ChatButtonLabel.BackColor = PeopleButtonLabel.BackColor = Color.White;
 
 			ChatMessage.SelectionStart = ChatMessage.SelectionLength = 0;
-			InnerChatContainer.HorizontalScroll.Enabled = false;
 		}
 
 		private void Send()
