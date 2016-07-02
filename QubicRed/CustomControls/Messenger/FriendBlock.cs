@@ -46,7 +46,7 @@ namespace QubicRed.CustomControls.Messenger
 			LastTimeStamp.AutoSize = true;
 			LastTimeStamp.Font = new Font(Font.FontFamily, 8, Font.Style);
 			LastTimeStamp.Text = "00:00 PM";
-			LastTimeStamp.Location = new Point(UserName.Location.X + UserName.Width - 10, UserName.Location.Y + 3);
+			LastTimeStamp.Location = new Point(UserName.Location.X + UserName.Width - 10, UserName.Location.Y + 2);
 			LastTimeStamp.TextAlign = ContentAlignment.MiddleLeft;
 			LastTimeStamp.UseCompatibleTextRendering = true;
 			LastTimeStamp.ForeColor = Color.FromArgb(200, 200, 200);

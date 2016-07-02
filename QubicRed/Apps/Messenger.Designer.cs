@@ -79,7 +79,7 @@
 			this.Seperator1 = new System.Windows.Forms.Panel();
 			this.ClientSocket = new QubicRed.Components.QRSocket(this.components);
 			this.LoginOverlay = new System.Windows.Forms.Panel();
-			this.LoginPleaseWait = new System.Windows.Forms.Label();
+			this.LoginStatus = new System.Windows.Forms.Label();
 			this.LoginClear = new System.Windows.Forms.Button();
 			this.LoginButton = new System.Windows.Forms.Button();
 			this.LoginTitle = new System.Windows.Forms.Label();
@@ -631,7 +631,7 @@
 			this.InnerChatContainer.Controls.Add(this.NoChatSelectedLabel);
 			this.InnerChatContainer.Location = new System.Drawing.Point(1, 115);
 			this.InnerChatContainer.Name = "InnerChatContainer";
-			this.InnerChatContainer.Size = new System.Drawing.Size(995, 549);
+			this.InnerChatContainer.Size = new System.Drawing.Size(995, 529);
 			this.InnerChatContainer.TabIndex = 2;
 			// 
 			// NoChatSelectedLabel
@@ -641,7 +641,7 @@
 			this.NoChatSelectedLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
 			this.NoChatSelectedLabel.Location = new System.Drawing.Point(0, 0);
 			this.NoChatSelectedLabel.Name = "NoChatSelectedLabel";
-			this.NoChatSelectedLabel.Size = new System.Drawing.Size(995, 549);
+			this.NoChatSelectedLabel.Size = new System.Drawing.Size(995, 529);
 			this.NoChatSelectedLabel.TabIndex = 1;
 			this.NoChatSelectedLabel.Text = "Login to start chatting with your friends...";
 			this.NoChatSelectedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -658,6 +658,7 @@
 			this.ViewInLine.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
 			this.ViewInLine.TabIndex = 5;
 			this.ViewInLine.TabStop = false;
+			this.ViewInLine.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ViewInLine_MouseClick);
 			// 
 			// ViewAlternate
 			// 
@@ -671,6 +672,7 @@
 			this.ViewAlternate.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
 			this.ViewAlternate.TabIndex = 6;
 			this.ViewAlternate.TabStop = false;
+			this.ViewAlternate.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ViewAlternate_MouseClick);
 			// 
 			// ViewLabel
 			// 
@@ -749,7 +751,7 @@
 			// 
 			// LoginOverlay
 			// 
-			this.LoginOverlay.Controls.Add(this.LoginPleaseWait);
+			this.LoginOverlay.Controls.Add(this.LoginStatus);
 			this.LoginOverlay.Controls.Add(this.LoginClear);
 			this.LoginOverlay.Controls.Add(this.LoginButton);
 			this.LoginOverlay.Controls.Add(this.LoginTitle);
@@ -764,15 +766,14 @@
 			this.LoginOverlay.TabIndex = 0;
 			this.LoginOverlay.Paint += new System.Windows.Forms.PaintEventHandler(this.LoginOverlay_Paint);
 			// 
-			// LoginPleaseWait
+			// LoginStatus
 			// 
-			this.LoginPleaseWait.AutoSize = true;
-			this.LoginPleaseWait.Location = new System.Drawing.Point(603, 399);
-			this.LoginPleaseWait.Name = "LoginPleaseWait";
-			this.LoginPleaseWait.Size = new System.Drawing.Size(88, 19);
-			this.LoginPleaseWait.TabIndex = 7;
-			this.LoginPleaseWait.Text = "Please Wait...";
-			this.LoginPleaseWait.Visible = false;
+			this.LoginStatus.Location = new System.Drawing.Point(503, 399);
+			this.LoginStatus.Name = "LoginStatus";
+			this.LoginStatus.Size = new System.Drawing.Size(276, 19);
+			this.LoginStatus.TabIndex = 7;
+			this.LoginStatus.Text = "Connecting to server...";
+			this.LoginStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// LoginClear
 			// 
@@ -789,6 +790,7 @@
 			// LoginButton
 			// 
 			this.LoginButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.LoginButton.Enabled = false;
 			this.LoginButton.FlatAppearance.BorderColor = System.Drawing.Color.Black;
 			this.LoginButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.LoginButton.Location = new System.Drawing.Point(538, 366);
@@ -960,6 +962,6 @@
 		private System.Windows.Forms.Button LoginButton;
 		private System.Windows.Forms.Button LoginClear;
 		private System.Windows.Forms.Label NoChatSelectedLabel;
-		private System.Windows.Forms.Label LoginPleaseWait;
+		private System.Windows.Forms.Label LoginStatus;
 	}
 }

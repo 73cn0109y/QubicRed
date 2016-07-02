@@ -21,6 +21,7 @@ namespace QubicRed.Apps
 		private FriendBlock SelectedChat = null;
 		private int ConversationID = -1;
 		private List<Conversation> Conversations = null;
+		private bool alternateChat = true;
 
 		protected Dictionary<string, string> PreDefinedMessage = new Dictionary<string, string>()
 		{
@@ -37,6 +38,8 @@ namespace QubicRed.Apps
 			ChatButtonLabel.BackColor = PeopleButtonLabel.BackColor = Color.White;
 
 			ChatMessage.SelectionStart = ChatMessage.SelectionLength = 0;
+
+			LoginOverlay.BringToFront();
 		}
 
 		private void Send()
@@ -59,7 +62,7 @@ namespace QubicRed.Apps
 			);
 			ClientSocket.Send("message", msg);
 			ChatMessage.Text = PreDefinedMessage["TypeRecipient"] + RecipientUser.UserName;
-			ChatMessage.SelectionStart = ChatMessage.SelectionLength = 0;
+			ChatMessage.SelectionLength = ChatMessage.SelectionStart = 0;
 		}
 
 		private void ToggleEmojis() { }
@@ -88,8 +91,13 @@ namespace QubicRed.Apps
 			int y = 5;
 			foreach (MessageBlock msg in InnerChatContainer.Controls.OfType<MessageBlock>())
 			{
+				if (msg.Sender != CurrentUser.UserName)
+					msg.Alternate = true;
+				else
+					msg.Alternate = false;
+
 				int x = msg.Sender.ToLower() == CurrentUser.UserName.ToLower() ?
-				(InnerChatContainer.Width - msg.Width - 10) : 10;
+				(InnerChatContainer.Width - msg.Width - 30) : 20;
 
 				Invoke(new MethodInvoker(() => { msg.Location = new Point(x, y); }));
 				y += msg.Height + 10;
@@ -100,7 +108,7 @@ namespace QubicRed.Apps
 
 		private void Login()
 		{
-			LoginPleaseWait.Show();
+			LoginStatus.Text = "Logging in...";
 
 			string username = LoginUserName.Text;
 			string password = LoginPassWord.Text;
@@ -180,6 +188,17 @@ namespace QubicRed.Apps
 				block.MouseClick += ConversationBlock_MouseClick;
 				block.Location = new Point(0, SideBarContainer.Controls.Count * 75);
 				SideBarContainer.Controls.Add(block);
+
+				if (conv.Replies.Count > 0)
+				{
+					Reply lastReply = conv.Replies[conv.Replies.Count - 1];
+
+					string timeStamp = lastReply.TimeStamp;
+					timeStamp = DateTime.Parse(timeStamp).ToString("h:mm tt");
+
+					block.LastMessage = lastReply.Message;
+					block.TimeStamp = timeStamp;
+				}
 			}
 		}
 
@@ -218,6 +237,15 @@ namespace QubicRed.Apps
 			ChatMessage.SelectionLength = ChatMessage.SelectionStart = 0;
 
 			RecipientUserName.Location = new Point(RecipientRealName.Location.X + RecipientRealName.Width + 6, RecipientRealName.Location.Y);
+		}
+
+		private void SwitchLayouts(bool alternate)
+		{
+			if (alternateChat == alternate)
+				return;
+
+			alternateChat = alternate;
+			ResizeChat();
 		}
 
 		private void FriendBlock_MouseClick(object sender, MouseEventArgs e)
@@ -308,6 +336,11 @@ namespace QubicRed.Apps
 				ChatMessage.Text = "";
 				ChatMessage.ForeColor = Color.Black;
 			}
+			if(e.KeyCode == Keys.Enter) // Stops windows sound
+			{
+				e.SuppressKeyPress = true;
+				e.Handled = true;
+			}
 		}
 
 		private void ChatMessage_KeyUp(object sender, KeyEventArgs e)
@@ -321,7 +354,11 @@ namespace QubicRed.Apps
 				ChatMessage.ForeColor = Color.FromArgb(150, 150, 150);
 			}
 			if (e.KeyCode == Keys.Enter)
+			{
 				Send();
+				e.Handled = true;
+				e.SuppressKeyPress = true;
+			}
 		}
 
 		private void ChatMessage_TextChanged(object sender, EventArgs e)
@@ -459,7 +496,14 @@ namespace QubicRed.Apps
 			{
 				case "connected":
 					if ((bool)e.Data)
+					{
 						ClientSocket.RegisterModule("messenger");
+						Invoke(new MethodInvoker(() =>
+						{
+							LoginButton.Enabled = true;
+							LoginStatus.Text = "Connection Successful!";
+						}));
+					}
 					break;
 				case "login":
 					LoginResult(e.Data);
@@ -503,6 +547,16 @@ namespace QubicRed.Apps
 		private void LoginOverlay_Paint(object sender, PaintEventArgs e)
 		{
 
+		}
+
+		private void ViewAlternate_MouseClick(object sender, MouseEventArgs e)
+		{
+			SwitchLayouts(true);
+		}
+
+		private void ViewInLine_MouseClick(object sender, MouseEventArgs e)
+		{
+			SwitchLayouts(false);
 		}
 	}
 

@@ -9,14 +9,16 @@ namespace QubicRed.CustomControls.Messenger
 		public string Message { set { if(lblMessage != null) lblMessage.Text = value; } }
 		public string Date { set { if (lblDate != null) lblDate.Text = value; } }
 		public string Sender { get; set; }
+		public bool Alternate { get { return alternate; } set { SetAlternate(value); } }
 
 		protected Panel pnlContainer;
 		protected Label lblMessage;
 		protected Label lblDate;
+		protected bool alternate = false;
 
 		public MessageBlock()
 		{
-			BackColor = Color.FromArgb(150, 150, 150);
+			BackColor = Color.FromArgb(230, 230, 230);
 			ForeColor = Color.Black;
 			Size = MinimumSize = new Size(125, 50);
 			Font = new Font("Leelawadee UI", 12, FontStyle.Regular);
@@ -31,15 +33,18 @@ namespace QubicRed.CustomControls.Messenger
 			lblMessage.AutoSize = false;
 			lblMessage.TextAlign = ContentAlignment.TopLeft;
 			lblMessage.Padding = new Padding(10);
+			lblMessage.BackColor = Color.Transparent;
 
 			lblDate = new Label();
 			lblDate.AutoSize = false;
 			lblDate.Size = new Size(100, 25);
 			lblDate.TextAlign = ContentAlignment.MiddleLeft;
-			lblDate.Location = new Point(10, pnlContainer.Height - lblDate.Height);
+			lblDate.Location = new Point(10, pnlContainer.Height - lblDate.Height - 5);
 			lblDate.Text = "00:00 AM";
 			lblDate.Font = new Font(Font.FontFamily, 8, Font.Style);
 			lblDate.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			lblDate.BackColor = Color.Transparent;
+			lblDate.ForeColor = Color.FromArgb(150, 150, 150);
 
 			pnlContainer.Controls.Add(lblDate);
 			pnlContainer.Controls.Add(lblMessage);
@@ -57,10 +62,23 @@ namespace QubicRed.CustomControls.Messenger
 
 				totalHeight += (size.Height * lines) + (lblMessage.Padding.Bottom * 2);
 				totalHeight += lblDate.Height;
-				totalHeight += 15;
-				Size = new Size(size.Width + (lblMessage.Padding.Left * 2) +10, totalHeight);
+				totalHeight += 20;
+				int width = size.Width + (lblMessage.Padding.Left * 2) + 10;
+				if (width < 150)
+					width = 150;
+				Size = new Size(width, totalHeight);
 				lblMessage.Size = new Size(Width, totalHeight);
 			}
+		}
+
+		private void SetAlternate(bool e)
+		{
+			if (alternate == e)
+				return;
+
+			alternate = e;
+
+			pnlContainer.BackColor = (alternate ? Color.Transparent : Color.White);
 		}
 	}
 }
