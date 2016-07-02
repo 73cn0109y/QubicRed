@@ -13,7 +13,7 @@ namespace QubicRed.CustomControls.Messenger
 		public string LastMessage { set { lblLastMessage.Text = value; } }
 		public string TimeStamp { set { LastTimeStamp.Text = value; } }
 
-		protected PictureBox UserImage;
+		protected RoundedPictureBox UserImage;
 		protected Label UserName;
 		protected Label LastTimeStamp;
 		protected Label lblLastMessage;
@@ -28,9 +28,10 @@ namespace QubicRed.CustomControls.Messenger
 			Size = size;
 			Cursor = Cursors.Hand;
 
-			UserImage = new PictureBox();
-			UserImage.Dock = DockStyle.Left;
-			UserImage.Size = new Size(50, 50);
+			UserImage = new RoundedPictureBox();
+			UserImage.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom;
+			UserImage.Size = new Size(30, 30);
+			UserImage.Location = new Point(10, Height / 2 - (UserImage.Height / 2));
 			UserImage.SizeMode = PictureBoxSizeMode.CenterImage;
 			UserImage.Image = User.UserImage.DownloadImage(UserImage.Size);
 			UserImage.BackColor = Color.Transparent;
@@ -38,7 +39,7 @@ namespace QubicRed.CustomControls.Messenger
 			UserName = new Label();
 			UserName.AutoSize = true;
 			UserName.Text = User.UserName;
-			UserName.Location = new Point(UserImage.Width + 10, 10);
+			UserName.Location = new Point(60, 10);
 			UserName.TextAlign = ContentAlignment.MiddleLeft;
 			UserName.BackColor = Color.Transparent;
 
@@ -56,7 +57,7 @@ namespace QubicRed.CustomControls.Messenger
 			lblLastMessage.AutoSize = false;
 			lblLastMessage.AutoEllipsis = true;
 			lblLastMessage.Size = new Size(Width - UserImage.Width - 10, 25);
-			lblLastMessage.Location = new Point(UserImage.Width + 10, Height - lblLastMessage.Height - 10);
+			lblLastMessage.Location = new Point(UserName.Location.X, Height - lblLastMessage.Height - 10);
 			lblLastMessage.Text = "This is where the last received message is shown";
 			lblLastMessage.BackColor = Color.Transparent;
 

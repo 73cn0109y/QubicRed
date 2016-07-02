@@ -248,6 +248,29 @@ namespace QubicRed.Apps
 			ResizeChat();
 		}
 
+		private void CompressSidebar()
+		{
+			bool compress = SideBar.Width > 50;
+
+			if (compress)
+				SideBar.Size = new Size(50, SideBar.Height);
+			else
+				SideBar.Size = new Size(300, SideBar.Height);
+
+			PeoplesButton.Visible = ChatsButton.Visible = !compress;
+			SideBarContainer.Location = new Point(0, (compress ?
+				ChatsButton.Location.Y :
+				(ChatsButton.Location.Y + ChatsButton.Height)));
+			SideBarContainer.Size = new Size(SideBarContainer.Width, (compress ?
+				(SideBar.Height - ChatsButton.Location.Y) :
+				(SideBar.Height - (ChatsButton.Location.Y + ChatsButton.Height))));
+
+
+			ChatContainer.Size = new Size(Width - SideBar.Width, ChatContainer.Height);
+			ChatContainer.Location = new Point(SideBar.Width, ChatContainer.Location.Y);
+			ResizeChat();
+		}
+
 		private void FriendBlock_MouseClick(object sender, MouseEventArgs e)
 		{
 			FriendBlock block = sender as FriendBlock;
@@ -496,14 +519,14 @@ namespace QubicRed.Apps
 			{
 				case "connected":
 					if ((bool)e.Data)
-					{
 						ClientSocket.RegisterModule("messenger");
-						Invoke(new MethodInvoker(() =>
-						{
-							LoginButton.Enabled = true;
-							LoginStatus.Text = "Connection Successful!";
-						}));
-					}
+					break;
+				case "moduleregistered":
+					Invoke(new MethodInvoker(() =>
+					{
+						LoginButton.Enabled = true;
+						LoginStatus.Text = "Connection Successful!";
+					}));
 					break;
 				case "login":
 					LoginResult(e.Data);
@@ -557,6 +580,16 @@ namespace QubicRed.Apps
 		private void ViewInLine_MouseClick(object sender, MouseEventArgs e)
 		{
 			SwitchLayouts(false);
+		}
+
+		private void CompressIcon_MouseClick(object sender, MouseEventArgs e)
+		{
+			CompressSidebar();
+		}
+
+		private void CompressLabel_MouseClick(object sender, MouseEventArgs e)
+		{
+			CompressSidebar();
 		}
 	}
 

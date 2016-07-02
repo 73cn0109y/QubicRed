@@ -76,6 +76,8 @@ namespace QubicRed
 		{
 			if (targetSize == default(Size))
 				targetSize = new Size(100, 100);
+			if (targetSize.Width > image.Width && targetSize.Height > image.Height)
+				targetSize = image.Size;
 
 			int sourceWidth = image.Width;
 			int sourceHeight = image.Height;

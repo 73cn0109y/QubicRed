@@ -86,7 +86,11 @@
     <Compile Include="CustomControls\ClickThroughLabel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CustomControls\RoundedPictureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Extensions.cs" />
+    <Compile Include="GraphicsExtension.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QRDF.cs">
