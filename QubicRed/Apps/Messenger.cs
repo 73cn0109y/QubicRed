@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -14,6 +16,8 @@ namespace QubicRed.Apps
 	{
 		public UserInfo CurrentUser { get { return currentUser; } set { UpdateCurrentUser(value); } }
 		public UserInfo RecipientUser { get { return recipientUser; } set { UpdateRecipientUser(value); } }
+		public System.Media.SoundPlayer NotificationSound { get; protected set; }
+		public new bool Activated { get; protected set; }
 
 		private UserInfo currentUser = null;
 		private UserInfo recipientUser = null;
@@ -22,6 +26,8 @@ namespace QubicRed.Apps
 		private int ConversationID = -1;
 		private List<Conversation> Conversations = null;
 		private bool alternateChat = true;
+		private int unreadMessages = 0;
+		private DateTime lastNotification = DateTime.Now;
 
 		protected Dictionary<string, string> PreDefinedMessage = new Dictionary<string, string>()
 		{
@@ -40,6 +46,8 @@ namespace QubicRed.Apps
 			ChatMessage.SelectionStart = ChatMessage.SelectionLength = 0;
 
 			LoginOverlay.BringToFront();
+
+			NotificationSound = new System.Media.SoundPlayer(@"Audio\Messenger_New_Message.wav");
 		}
 
 		private void Send()
@@ -63,6 +71,7 @@ namespace QubicRed.Apps
 			ClientSocket.Send("message", msg);
 			ChatMessage.Text = PreDefinedMessage["TypeRecipient"] + RecipientUser.UserName;
 			ChatMessage.SelectionLength = ChatMessage.SelectionStart = 0;
+			ChatMessage.ForeColor = Color.FromArgb(150, 150, 150);
 		}
 
 		private void ToggleEmojis() { }
@@ -86,6 +95,9 @@ namespace QubicRed.Apps
 				return;
 			}
 
+			bool bottom = InnerChatContainer.VerticalScroll.Value + InnerChatContainer.Height + 1 >= InnerChatContainer.VerticalScroll.Maximum;
+			Point autoScroll = InnerChatContainer.AutoScrollPosition;
+
 			InnerChatContainer.AutoScrollPosition = new Point(0, 0);
 
 			int y = 5;
@@ -103,7 +115,15 @@ namespace QubicRed.Apps
 				y += msg.Height + 10;
 			}
 
-			InnerChatContainer.ScrollControlIntoView(InnerChatContainer.Controls[InnerChatContainer.Controls.Count - 1]);
+			if (bottom)
+				InnerChatContainer.ScrollControlIntoView(InnerChatContainer.Controls[InnerChatContainer.Controls.Count - 1]);
+			else
+			{
+				unreadMessages++;
+				ChatUnreadMessage.Text = "You have " + unreadMessages + " unread message" + (unreadMessages > 1 ? "s" : "");
+				ChatUnreadMessage.Show();
+				InnerChatContainer.AutoScrollPosition = new Point(-autoScroll.X, -autoScroll.Y);
+			}
 		}
 
 		private void Login()
@@ -510,6 +530,12 @@ namespace QubicRed.Apps
 				SelectedChat.TimeStamp = timeStamp;
 			}));
 
+			if((DateTime.Now - lastNotification).TotalSeconds > 5)
+			{
+				lastNotification = DateTime.Now;
+				NotificationSound.Play();
+			}
+
 			ResizeChat();
 		}
 
@@ -555,6 +581,20 @@ namespace QubicRed.Apps
 				ResizeChat();
 		}
 
+		protected override void OnActivated(EventArgs e)
+		{
+			Activated = true;
+
+			base.OnActivated(e);
+		}
+
+		protected override void OnDeactivate(EventArgs e)
+		{
+			Activated = false;
+
+			base.OnDeactivate(e);
+		}
+
 		private void LoginButton_MouseClick(object sender, MouseEventArgs e)
 		{
 			Login();
@@ -590,6 +630,15 @@ namespace QubicRed.Apps
 		private void CompressLabel_MouseClick(object sender, MouseEventArgs e)
 		{
 			CompressSidebar();
+		}
+
+		private void ChatUnreadMessage_MouseClick(object sender, MouseEventArgs e)
+		{
+			unreadMessages = 0;
+			if (InnerChatContainer.Controls.Count <= 1)
+				return;
+			InnerChatContainer.ScrollControlIntoView(InnerChatContainer.Controls[InnerChatContainer.Controls.Count - 1]);
+			ChatUnreadMessage.Hide();
 		}
 	}
 

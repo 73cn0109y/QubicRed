@@ -56,7 +56,7 @@ namespace QubicRed.CustomControls.Messenger
 			lblLastMessage = new Label();
 			lblLastMessage.AutoSize = false;
 			lblLastMessage.AutoEllipsis = true;
-			lblLastMessage.Size = new Size(Width - UserImage.Width - 10, 25);
+			lblLastMessage.Size = new Size(Width - UserName.Location.X - 10, 25);
 			lblLastMessage.Location = new Point(UserName.Location.X, Height - lblLastMessage.Height - 10);
 			lblLastMessage.Text = "This is where the last received message is shown";
 			lblLastMessage.BackColor = Color.Transparent;

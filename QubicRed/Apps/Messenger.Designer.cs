@@ -47,6 +47,7 @@
 			this.CompressLabel = new System.Windows.Forms.Label();
 			this.CompressIcon = new System.Windows.Forms.PictureBox();
 			this.ChatContainer = new System.Windows.Forms.Panel();
+			this.ChatUnreadMessage = new System.Windows.Forms.Label();
 			this.ChatMessageContainer = new System.Windows.Forms.Panel();
 			this.SendIcon = new System.Windows.Forms.PictureBox();
 			this.ChatMessage = new System.Windows.Forms.TextBox();
@@ -356,6 +357,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ChatContainer.BackColor = System.Drawing.Color.White;
+			this.ChatContainer.Controls.Add(this.ChatUnreadMessage);
 			this.ChatContainer.Controls.Add(this.ChatMessageContainer);
 			this.ChatContainer.Controls.Add(this.ChatInfo);
 			this.ChatContainer.Controls.Add(this.InnerChatContainer);
@@ -365,6 +367,23 @@
 			this.ChatContainer.Size = new System.Drawing.Size(980, 698);
 			this.ChatContainer.TabIndex = 3;
 			this.ChatContainer.Paint += new System.Windows.Forms.PaintEventHandler(this.ChatContainer_Paint);
+			// 
+			// ChatUnreadMessage
+			// 
+			this.ChatUnreadMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.ChatUnreadMessage.BackColor = System.Drawing.Color.White;
+			this.ChatUnreadMessage.Cursor = System.Windows.Forms.Cursors.Hand;
+			this.ChatUnreadMessage.Font = new System.Drawing.Font("Leelawadee UI", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+			this.ChatUnreadMessage.ForeColor = System.Drawing.Color.Green;
+			this.ChatUnreadMessage.Location = new System.Drawing.Point(1, 618);
+			this.ChatUnreadMessage.Name = "ChatUnreadMessage";
+			this.ChatUnreadMessage.Size = new System.Drawing.Size(980, 30);
+			this.ChatUnreadMessage.TabIndex = 2;
+			this.ChatUnreadMessage.Text = "You have 1 unread message";
+			this.ChatUnreadMessage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.ChatUnreadMessage.Visible = false;
+			this.ChatUnreadMessage.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ChatUnreadMessage_MouseClick);
 			// 
 			// ChatMessageContainer
 			// 
@@ -978,5 +997,6 @@
 		private System.Windows.Forms.Label LoginStatus;
 		private System.Windows.Forms.Panel RecipientImageContainer;
 		private CustomControls.RoundedPictureBox RecipientImage;
+		private System.Windows.Forms.Label ChatUnreadMessage;
 	}
 }
