@@ -32,8 +32,8 @@
 			this.MinimizeButton = new System.Windows.Forms.PictureBox();
 			this.StateButton = new System.Windows.Forms.PictureBox();
 			this.CloseButton = new System.Windows.Forms.PictureBox();
-			this.Title = new QubicRed.CustomControls.ClickThroughLabel();
 			this.ExtendedBar = new System.Windows.Forms.Panel();
+			this.Title = new QubicRed.CustomControls.ClickThroughLabel();
 			this.HeaderBar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinimizeButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.StateButton)).BeginInit();
@@ -49,9 +49,9 @@
 			this.HeaderBar.Controls.Add(this.Title);
 			this.HeaderBar.Dock = System.Windows.Forms.DockStyle.Top;
 			this.HeaderBar.ForeColor = System.Drawing.Color.White;
-			this.HeaderBar.Location = new System.Drawing.Point(0, 0);
+			this.HeaderBar.Location = new System.Drawing.Point(2, 2);
 			this.HeaderBar.Name = "HeaderBar";
-			this.HeaderBar.Size = new System.Drawing.Size(800, 30);
+			this.HeaderBar.Size = new System.Drawing.Size(796, 30);
 			this.HeaderBar.TabIndex = 0;
 			this.HeaderBar.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.HeaderBar_MouseDoubleClick);
 			this.HeaderBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.HeaderBar_MouseDown);
@@ -63,7 +63,7 @@
 			this.MinimizeButton.BackColor = System.Drawing.Color.Transparent;
 			this.MinimizeButton.Dock = System.Windows.Forms.DockStyle.Right;
 			this.MinimizeButton.Image = global::QubicRed.Properties.Resources.minimize;
-			this.MinimizeButton.Location = new System.Drawing.Point(650, 0);
+			this.MinimizeButton.Location = new System.Drawing.Point(646, 0);
 			this.MinimizeButton.Name = "MinimizeButton";
 			this.MinimizeButton.Size = new System.Drawing.Size(50, 30);
 			this.MinimizeButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -80,7 +80,7 @@
 			this.StateButton.BackColor = System.Drawing.Color.Transparent;
 			this.StateButton.Dock = System.Windows.Forms.DockStyle.Right;
 			this.StateButton.Image = global::QubicRed.Properties.Resources.state;
-			this.StateButton.Location = new System.Drawing.Point(700, 0);
+			this.StateButton.Location = new System.Drawing.Point(696, 0);
 			this.StateButton.Name = "StateButton";
 			this.StateButton.Size = new System.Drawing.Size(50, 30);
 			this.StateButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -97,7 +97,7 @@
 			this.CloseButton.BackColor = System.Drawing.Color.Transparent;
 			this.CloseButton.Dock = System.Windows.Forms.DockStyle.Right;
 			this.CloseButton.Image = global::QubicRed.Properties.Resources.close;
-			this.CloseButton.Location = new System.Drawing.Point(750, 0);
+			this.CloseButton.Location = new System.Drawing.Point(746, 0);
 			this.CloseButton.Name = "CloseButton";
 			this.CloseButton.Size = new System.Drawing.Size(50, 30);
 			this.CloseButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -108,6 +108,16 @@
 			this.CloseButton.MouseEnter += new System.EventHandler(this.CloseButton_MouseEnter);
 			this.CloseButton.MouseLeave += new System.EventHandler(this.CloseButton_MouseLeave);
 			this.CloseButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CloseButton_MouseUp);
+			// 
+			// ExtendedBar
+			// 
+			this.ExtendedBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+			this.ExtendedBar.Dock = System.Windows.Forms.DockStyle.Top;
+			this.ExtendedBar.ForeColor = System.Drawing.Color.White;
+			this.ExtendedBar.Location = new System.Drawing.Point(2, 32);
+			this.ExtendedBar.Name = "ExtendedBar";
+			this.ExtendedBar.Size = new System.Drawing.Size(796, 40);
+			this.ExtendedBar.TabIndex = 1;
 			// 
 			// Title
 			// 
@@ -120,16 +130,6 @@
 			this.Title.Text = "Qubic Red - Application";
 			this.Title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.Title.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-			// 
-			// ExtendedBar
-			// 
-			this.ExtendedBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
-			this.ExtendedBar.Dock = System.Windows.Forms.DockStyle.Top;
-			this.ExtendedBar.ForeColor = System.Drawing.Color.White;
-			this.ExtendedBar.Location = new System.Drawing.Point(0, 30);
-			this.ExtendedBar.Name = "ExtendedBar";
-			this.ExtendedBar.Size = new System.Drawing.Size(800, 40);
-			this.ExtendedBar.TabIndex = 1;
 			// 
 			// QRDF
 			// 
@@ -150,6 +150,7 @@
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(800, 600);
 			this.Name = "QRDF";
+			this.Padding = new System.Windows.Forms.Padding(2);
 			this.Text = "Qubic Red - Application";
 			this.HeaderBar.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.MinimizeButton)).EndInit();

@@ -30,8 +30,8 @@ namespace QubicRed.Components
 		public void Init()
 		{
 			// TODO: Implement a way for the server to tell the client they are ready to communicate
-			//WebSocket = IO.Socket("https://qubicredserver-frosenos.rhcloud.com:8443/");
-			WebSocket = IO.Socket("http://localhost:8080/");
+			WebSocket = IO.Socket("https://qubicredserver-frosenos.rhcloud.com:8443/");
+			//WebSocket = IO.Socket("http://localhost:8080/");
 			//WebSocket = IO.Socket("https://home-frosenos.rhcloud.com:8443/");
 			WebSocket.On(Socket.EVENT_CONNECT, () =>
 			{

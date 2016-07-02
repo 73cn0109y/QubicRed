@@ -89,6 +89,7 @@
 			this.LoginPassWord = new System.Windows.Forms.TextBox();
 			this.LoginUserNameLabel = new System.Windows.Forms.Label();
 			this.LoginUserName = new System.Windows.Forms.TextBox();
+			this.BorderRight = new QubicRed.CustomControls.ClickThroughPanel();
 			this.ExtendedBar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.UserPicture)).BeginInit();
 			this.SideBar.SuspendLayout();
@@ -138,7 +139,7 @@
 			this.ExtendedBar.Controls.Add(this.ViewInLine);
 			this.ExtendedBar.Controls.Add(this.UserName);
 			this.ExtendedBar.Controls.Add(this.UserPicture);
-			this.ExtendedBar.Size = new System.Drawing.Size(1280, 40);
+			this.ExtendedBar.Size = new System.Drawing.Size(1276, 40);
 			// 
 			// UserPicture
 			// 
@@ -179,15 +180,17 @@
 			// 
 			// SideBar
 			// 
+			this.SideBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.SideBar.BackColor = System.Drawing.Color.White;
 			this.SideBar.Controls.Add(this.SideBarContainer);
 			this.SideBar.Controls.Add(this.PeoplesButton);
 			this.SideBar.Controls.Add(this.ChatsButton);
 			this.SideBar.Controls.Add(this.SideBarOptions);
-			this.SideBar.Location = new System.Drawing.Point(0, 71);
+			this.SideBar.Location = new System.Drawing.Point(2, 71);
 			this.SideBar.MaximumSize = new System.Drawing.Size(300, 99999);
 			this.SideBar.Name = "SideBar";
-			this.SideBar.Size = new System.Drawing.Size(300, 697);
+			this.SideBar.Size = new System.Drawing.Size(300, 695);
 			this.SideBar.TabIndex = 2;
 			// 
 			// SideBarContainer
@@ -198,17 +201,18 @@
 			this.SideBarContainer.Controls.Add(this.NoChatsLabel);
 			this.SideBarContainer.Location = new System.Drawing.Point(0, 90);
 			this.SideBarContainer.Name = "SideBarContainer";
-			this.SideBarContainer.Size = new System.Drawing.Size(300, 566);
+			this.SideBarContainer.Size = new System.Drawing.Size(300, 564);
 			this.SideBarContainer.TabIndex = 3;
 			// 
 			// NoChatsLabel
 			// 
-			this.NoChatsLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.NoChatsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.NoChatsLabel.Font = new System.Drawing.Font("Leelawadee UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
 			this.NoChatsLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
 			this.NoChatsLabel.Location = new System.Drawing.Point(0, 0);
 			this.NoChatsLabel.Name = "NoChatsLabel";
-			this.NoChatsLabel.Size = new System.Drawing.Size(300, 566);
+			this.NoChatsLabel.Size = new System.Drawing.Size(300, 605);
 			this.NoChatsLabel.TabIndex = 0;
 			this.NoChatsLabel.Text = "It\'s a little lonely in here...";
 			this.NoChatsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -364,7 +368,7 @@
 			this.ChatContainer.Location = new System.Drawing.Point(300, 70);
 			this.ChatContainer.Name = "ChatContainer";
 			this.ChatContainer.Padding = new System.Windows.Forms.Padding(1, 0, 0, 0);
-			this.ChatContainer.Size = new System.Drawing.Size(980, 698);
+			this.ChatContainer.Size = new System.Drawing.Size(978, 696);
 			this.ChatContainer.TabIndex = 3;
 			this.ChatContainer.Paint += new System.Windows.Forms.PaintEventHandler(this.ChatContainer_Paint);
 			// 
@@ -376,9 +380,9 @@
 			this.ChatUnreadMessage.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.ChatUnreadMessage.Font = new System.Drawing.Font("Leelawadee UI", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
 			this.ChatUnreadMessage.ForeColor = System.Drawing.Color.Green;
-			this.ChatUnreadMessage.Location = new System.Drawing.Point(1, 618);
+			this.ChatUnreadMessage.Location = new System.Drawing.Point(1, 616);
 			this.ChatUnreadMessage.Name = "ChatUnreadMessage";
-			this.ChatUnreadMessage.Size = new System.Drawing.Size(980, 30);
+			this.ChatUnreadMessage.Size = new System.Drawing.Size(978, 30);
 			this.ChatUnreadMessage.TabIndex = 2;
 			this.ChatUnreadMessage.Text = "You have 1 unread message";
 			this.ChatUnreadMessage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -394,9 +398,9 @@
 			this.ChatMessageContainer.Controls.Add(this.Seperator3);
 			this.ChatMessageContainer.Controls.Add(this.VoiceIcon);
 			this.ChatMessageContainer.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.ChatMessageContainer.Location = new System.Drawing.Point(1, 648);
+			this.ChatMessageContainer.Location = new System.Drawing.Point(1, 646);
 			this.ChatMessageContainer.Name = "ChatMessageContainer";
-			this.ChatMessageContainer.Size = new System.Drawing.Size(979, 50);
+			this.ChatMessageContainer.Size = new System.Drawing.Size(977, 50);
 			this.ChatMessageContainer.TabIndex = 0;
 			// 
 			// SendIcon
@@ -404,7 +408,7 @@
 			this.SendIcon.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.SendIcon.Dock = System.Windows.Forms.DockStyle.Right;
 			this.SendIcon.Image = global::QubicRed.Properties.Resources.send;
-			this.SendIcon.Location = new System.Drawing.Point(919, 0);
+			this.SendIcon.Location = new System.Drawing.Point(917, 0);
 			this.SendIcon.Name = "SendIcon";
 			this.SendIcon.Size = new System.Drawing.Size(60, 50);
 			this.SendIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -421,7 +425,7 @@
 			this.ChatMessage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
 			this.ChatMessage.Location = new System.Drawing.Point(180, 16);
 			this.ChatMessage.Name = "ChatMessage";
-			this.ChatMessage.Size = new System.Drawing.Size(745, 22);
+			this.ChatMessage.Size = new System.Drawing.Size(743, 22);
 			this.ChatMessage.TabIndex = 4;
 			this.ChatMessage.Text = "Login to begin...";
 			this.ChatMessage.TextChanged += new System.EventHandler(this.ChatMessage_TextChanged);
@@ -494,7 +498,7 @@
 			this.ChatInfo.Location = new System.Drawing.Point(1, 0);
 			this.ChatInfo.Name = "ChatInfo";
 			this.ChatInfo.Padding = new System.Windows.Forms.Padding(0, 0, 0, 1);
-			this.ChatInfo.Size = new System.Drawing.Size(979, 115);
+			this.ChatInfo.Size = new System.Drawing.Size(977, 115);
 			this.ChatInfo.TabIndex = 1;
 			this.ChatInfo.Visible = false;
 			this.ChatInfo.Paint += new System.Windows.Forms.PaintEventHandler(this.ChatInfo_Paint);
@@ -535,7 +539,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.SocialHubIcon.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.SocialHubIcon.Image = global::QubicRed.Properties.Resources.socialhub;
-			this.SocialHubIcon.Location = new System.Drawing.Point(828, 50);
+			this.SocialHubIcon.Location = new System.Drawing.Point(817, 50);
 			this.SocialHubIcon.Name = "SocialHubIcon";
 			this.SocialHubIcon.Size = new System.Drawing.Size(20, 19);
 			this.SocialHubIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -548,7 +552,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.SocialHubLabel.AutoSize = true;
 			this.SocialHubLabel.Cursor = System.Windows.Forms.Cursors.Hand;
-			this.SocialHubLabel.Location = new System.Drawing.Point(854, 50);
+			this.SocialHubLabel.Location = new System.Drawing.Point(843, 50);
 			this.SocialHubLabel.Name = "SocialHubLabel";
 			this.SocialHubLabel.Size = new System.Drawing.Size(126, 19);
 			this.SocialHubLabel.TabIndex = 9;
@@ -663,7 +667,7 @@
 			this.InnerChatContainer.Controls.Add(this.NoChatSelectedLabel);
 			this.InnerChatContainer.Location = new System.Drawing.Point(1, 115);
 			this.InnerChatContainer.Name = "InnerChatContainer";
-			this.InnerChatContainer.Size = new System.Drawing.Size(995, 529);
+			this.InnerChatContainer.Size = new System.Drawing.Size(993, 527);
 			this.InnerChatContainer.TabIndex = 2;
 			// 
 			// NoChatSelectedLabel
@@ -673,7 +677,7 @@
 			this.NoChatSelectedLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
 			this.NoChatSelectedLabel.Location = new System.Drawing.Point(0, 0);
 			this.NoChatSelectedLabel.Name = "NoChatSelectedLabel";
-			this.NoChatSelectedLabel.Size = new System.Drawing.Size(995, 529);
+			this.NoChatSelectedLabel.Size = new System.Drawing.Size(993, 527);
 			this.NoChatSelectedLabel.TabIndex = 1;
 			this.NoChatSelectedLabel.Text = "Login to start chatting with your friends...";
 			this.NoChatSelectedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -684,7 +688,7 @@
 			this.ViewInLine.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.ViewInLine.Dock = System.Windows.Forms.DockStyle.Right;
 			this.ViewInLine.Image = global::QubicRed.Properties.Resources.viewstack;
-			this.ViewInLine.Location = new System.Drawing.Point(1240, 0);
+			this.ViewInLine.Location = new System.Drawing.Point(1236, 0);
 			this.ViewInLine.Name = "ViewInLine";
 			this.ViewInLine.Size = new System.Drawing.Size(40, 40);
 			this.ViewInLine.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -698,7 +702,7 @@
 			this.ViewAlternate.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.ViewAlternate.Dock = System.Windows.Forms.DockStyle.Right;
 			this.ViewAlternate.Image = global::QubicRed.Properties.Resources.viewalternate;
-			this.ViewAlternate.Location = new System.Drawing.Point(1200, 0);
+			this.ViewAlternate.Location = new System.Drawing.Point(1196, 0);
 			this.ViewAlternate.Name = "ViewAlternate";
 			this.ViewAlternate.Size = new System.Drawing.Size(40, 40);
 			this.ViewAlternate.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -711,7 +715,7 @@
 			this.ViewLabel.BackColor = System.Drawing.Color.Transparent;
 			this.ViewLabel.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.ViewLabel.Dock = System.Windows.Forms.DockStyle.Right;
-			this.ViewLabel.Location = new System.Drawing.Point(1150, 0);
+			this.ViewLabel.Location = new System.Drawing.Point(1146, 0);
 			this.ViewLabel.Name = "ViewLabel";
 			this.ViewLabel.Size = new System.Drawing.Size(50, 40);
 			this.ViewLabel.TabIndex = 7;
@@ -722,7 +726,7 @@
 			// 
 			this.Seperator2.BackColor = System.Drawing.Color.Transparent;
 			this.Seperator2.Dock = System.Windows.Forms.DockStyle.Right;
-			this.Seperator2.Location = new System.Drawing.Point(1140, 0);
+			this.Seperator2.Location = new System.Drawing.Point(1136, 0);
 			this.Seperator2.Name = "Seperator2";
 			this.Seperator2.Size = new System.Drawing.Size(10, 40);
 			this.Seperator2.TabIndex = 8;
@@ -734,7 +738,7 @@
 			this.SpecialVideo.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.SpecialVideo.Dock = System.Windows.Forms.DockStyle.Right;
 			this.SpecialVideo.Image = global::QubicRed.Properties.Resources.specialvideo;
-			this.SpecialVideo.Location = new System.Drawing.Point(1100, 0);
+			this.SpecialVideo.Location = new System.Drawing.Point(1096, 0);
 			this.SpecialVideo.Name = "SpecialVideo";
 			this.SpecialVideo.Size = new System.Drawing.Size(40, 40);
 			this.SpecialVideo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -747,7 +751,7 @@
 			this.SpecialCall.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.SpecialCall.Dock = System.Windows.Forms.DockStyle.Right;
 			this.SpecialCall.Image = global::QubicRed.Properties.Resources.specialcall;
-			this.SpecialCall.Location = new System.Drawing.Point(1060, 0);
+			this.SpecialCall.Location = new System.Drawing.Point(1056, 0);
 			this.SpecialCall.Name = "SpecialCall";
 			this.SpecialCall.Size = new System.Drawing.Size(40, 40);
 			this.SpecialCall.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -759,7 +763,7 @@
 			this.SpecialLabel.BackColor = System.Drawing.Color.Transparent;
 			this.SpecialLabel.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.SpecialLabel.Dock = System.Windows.Forms.DockStyle.Right;
-			this.SpecialLabel.Location = new System.Drawing.Point(990, 0);
+			this.SpecialLabel.Location = new System.Drawing.Point(986, 0);
 			this.SpecialLabel.Name = "SpecialLabel";
 			this.SpecialLabel.Size = new System.Drawing.Size(70, 40);
 			this.SpecialLabel.TabIndex = 11;
@@ -770,7 +774,7 @@
 			// 
 			this.Seperator1.BackColor = System.Drawing.Color.Transparent;
 			this.Seperator1.Dock = System.Windows.Forms.DockStyle.Right;
-			this.Seperator1.Location = new System.Drawing.Point(980, 0);
+			this.Seperator1.Location = new System.Drawing.Point(976, 0);
 			this.Seperator1.Name = "Seperator1";
 			this.Seperator1.Size = new System.Drawing.Size(10, 40);
 			this.Seperator1.TabIndex = 9;
@@ -783,6 +787,7 @@
 			// 
 			// LoginOverlay
 			// 
+			this.LoginOverlay.BackColor = System.Drawing.Color.White;
 			this.LoginOverlay.Controls.Add(this.LoginStatus);
 			this.LoginOverlay.Controls.Add(this.LoginClear);
 			this.LoginOverlay.Controls.Add(this.LoginButton);
@@ -792,9 +797,9 @@
 			this.LoginOverlay.Controls.Add(this.LoginUserNameLabel);
 			this.LoginOverlay.Controls.Add(this.LoginUserName);
 			this.LoginOverlay.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.LoginOverlay.Location = new System.Drawing.Point(0, 30);
+			this.LoginOverlay.Location = new System.Drawing.Point(2, 32);
 			this.LoginOverlay.Name = "LoginOverlay";
-			this.LoginOverlay.Size = new System.Drawing.Size(1280, 738);
+			this.LoginOverlay.Size = new System.Drawing.Size(1276, 734);
 			this.LoginOverlay.TabIndex = 0;
 			this.LoginOverlay.Paint += new System.Windows.Forms.PaintEventHandler(this.LoginOverlay_Paint);
 			// 
@@ -811,7 +816,7 @@
 			// 
 			this.LoginClear.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.LoginClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.LoginClear.Location = new System.Drawing.Point(644, 386);
+			this.LoginClear.Location = new System.Drawing.Point(642, 384);
 			this.LoginClear.Name = "LoginClear";
 			this.LoginClear.Size = new System.Drawing.Size(100, 30);
 			this.LoginClear.TabIndex = 6;
@@ -825,7 +830,7 @@
 			this.LoginButton.Enabled = false;
 			this.LoginButton.FlatAppearance.BorderColor = System.Drawing.Color.Black;
 			this.LoginButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.LoginButton.Location = new System.Drawing.Point(538, 386);
+			this.LoginButton.Location = new System.Drawing.Point(536, 384);
 			this.LoginButton.Name = "LoginButton";
 			this.LoginButton.Size = new System.Drawing.Size(100, 30);
 			this.LoginButton.TabIndex = 5;
@@ -838,7 +843,7 @@
 			this.LoginTitle.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.LoginTitle.AutoSize = true;
 			this.LoginTitle.Font = new System.Drawing.Font("Leelawadee UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-			this.LoginTitle.Location = new System.Drawing.Point(601, 269);
+			this.LoginTitle.Location = new System.Drawing.Point(599, 267);
 			this.LoginTitle.Name = "LoginTitle";
 			this.LoginTitle.Size = new System.Drawing.Size(74, 32);
 			this.LoginTitle.TabIndex = 4;
@@ -848,7 +853,7 @@
 			// 
 			this.LoginPassWordLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.LoginPassWordLabel.AutoSize = true;
-			this.LoginPassWordLabel.Location = new System.Drawing.Point(499, 357);
+			this.LoginPassWordLabel.Location = new System.Drawing.Point(497, 355);
 			this.LoginPassWordLabel.Name = "LoginPassWordLabel";
 			this.LoginPassWordLabel.Size = new System.Drawing.Size(67, 19);
 			this.LoginPassWordLabel.TabIndex = 3;
@@ -859,7 +864,7 @@
 			this.LoginPassWord.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.LoginPassWord.BackColor = System.Drawing.Color.White;
 			this.LoginPassWord.ForeColor = System.Drawing.Color.Black;
-			this.LoginPassWord.Location = new System.Drawing.Point(572, 354);
+			this.LoginPassWord.Location = new System.Drawing.Point(570, 352);
 			this.LoginPassWord.Name = "LoginPassWord";
 			this.LoginPassWord.PasswordChar = '•';
 			this.LoginPassWord.Size = new System.Drawing.Size(207, 26);
@@ -869,7 +874,7 @@
 			// 
 			this.LoginUserNameLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.LoginUserNameLabel.AutoSize = true;
-			this.LoginUserNameLabel.Location = new System.Drawing.Point(495, 325);
+			this.LoginUserNameLabel.Location = new System.Drawing.Point(493, 323);
 			this.LoginUserNameLabel.Name = "LoginUserNameLabel";
 			this.LoginUserNameLabel.Size = new System.Drawing.Size(71, 19);
 			this.LoginUserNameLabel.TabIndex = 1;
@@ -880,10 +885,20 @@
 			this.LoginUserName.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.LoginUserName.BackColor = System.Drawing.Color.White;
 			this.LoginUserName.ForeColor = System.Drawing.Color.Black;
-			this.LoginUserName.Location = new System.Drawing.Point(572, 322);
+			this.LoginUserName.Location = new System.Drawing.Point(570, 320);
 			this.LoginUserName.Name = "LoginUserName";
 			this.LoginUserName.Size = new System.Drawing.Size(207, 26);
 			this.LoginUserName.TabIndex = 0;
+			// 
+			// BorderRight
+			// 
+			this.BorderRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.BorderRight.BackColor = System.Drawing.Color.Transparent;
+			this.BorderRight.Location = new System.Drawing.Point(1278, 180);
+			this.BorderRight.Name = "BorderRight";
+			this.BorderRight.Size = new System.Drawing.Size(2, 550);
+			this.BorderRight.TabIndex = 2;
 			// 
 			// Messenger
 			// 
@@ -891,6 +906,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1280, 768);
+			this.Controls.Add(this.BorderRight);
 			this.Controls.Add(this.ChatContainer);
 			this.Controls.Add(this.SideBar);
 			this.Controls.Add(this.LoginOverlay);
@@ -899,6 +915,7 @@
 			this.Controls.SetChildIndex(this.SideBar, 0);
 			this.Controls.SetChildIndex(this.ChatContainer, 0);
 			this.Controls.SetChildIndex(this.ExtendedBar, 0);
+			this.Controls.SetChildIndex(this.BorderRight, 0);
 			this.ExtendedBar.ResumeLayout(false);
 			this.ExtendedBar.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.UserPicture)).EndInit();
@@ -998,5 +1015,6 @@
 		private System.Windows.Forms.Panel RecipientImageContainer;
 		private CustomControls.RoundedPictureBox RecipientImage;
 		private System.Windows.Forms.Label ChatUnreadMessage;
+		private CustomControls.ClickThroughPanel BorderRight;
 	}
 }

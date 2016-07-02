@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QubicRed.CustomControls.Messenger;
+using Dropbox.Api;
 using SocketMessage = QubicRed.Components.QRSocket_Extras.SocketMessage;
+using System.IO;
+using System.Threading.Tasks;
+using System.Text;
+using Dropbox.Api.Files;
+using System.Drawing.Imaging;
+using System.Net;
 
 namespace QubicRed.Apps
 {
@@ -80,7 +85,7 @@ namespace QubicRed.Apps
 
 		private void VoiceInput() { }
 
-		private void ResizeChat()
+		private void ResizeChat(bool resizeWindow = false)
 		{
 			if (InnerChatContainer.Controls.Count <= 0)
 				return;
@@ -91,7 +96,7 @@ namespace QubicRed.Apps
 
 			if (InvokeRequired)
 			{
-				Invoke(new MethodInvoker(() => { ResizeChat(); }));
+				Invoke(new MethodInvoker(() => { ResizeChat(resizeWindow); }));
 				return;
 			}
 
@@ -115,7 +120,7 @@ namespace QubicRed.Apps
 				y += msg.Height + 10;
 			}
 
-			if (bottom)
+			if (bottom || resizeWindow)
 				InnerChatContainer.ScrollControlIntoView(InnerChatContainer.Controls[InnerChatContainer.Controls.Count - 1]);
 			else
 			{
@@ -289,6 +294,29 @@ namespace QubicRed.Apps
 			ChatContainer.Size = new Size(Width - SideBar.Width, ChatContainer.Height);
 			ChatContainer.Location = new Point(SideBar.Width, ChatContainer.Location.Y);
 			ResizeChat();
+		}
+
+		private async Task<bool> Upload(string fileName)
+		{
+			if (!File.Exists(fileName))
+				return false;
+
+			using (DropboxClient dbx = new DropboxClient("iuvg5K38P2EAAAAAAAAGkRJPuLrbD0tShTADR4vgbs7TRnFu3IXD32l48e4KQ6UN"))
+			{
+				Progress<double> progress = new Progress<double>();
+				progress.ProgressChanged += Upload_ProgressChanged;
+				await Dropbox.Upload(dbx, fileName, "/" + Path.GetFileName(fileName), progress);
+			}
+
+			return true;
+		}
+
+		private void Upload_ProgressChanged(object sender, double e)
+		{
+			Invoke(new MethodInvoker(() =>
+			{
+				LoginStatus.Text = "Upload is " + e + "% complete...";
+			}));
 		}
 
 		private void FriendBlock_MouseClick(object sender, MouseEventArgs e)
@@ -570,15 +598,19 @@ namespace QubicRed.Apps
 		{
 			ClientSocket.Init();
 
+			OpenFileDialog ofd = new OpenFileDialog();
+			ofd.Multiselect = false;
+			if (ofd.ShowDialog() == DialogResult.OK)
+			{
+				// Dropbox
+				Task.Run(() => { return Upload(ofd.FileName); });
+
+				// Mega.NZ
+				//MegaNZ.UploadWithProgression(@"E:\Pictures\Windows 10 Google\001.png");
+			}
+			ofd.Dispose();
+
 			base.OnShown(e);
-		}
-
-		protected override void OnSizeChanged(EventArgs e)
-		{
-			base.OnSizeChanged(e);
-
-			if (IsHandleCreated)
-				ResizeChat();
 		}
 
 		protected override void OnActivated(EventArgs e)
@@ -593,6 +625,14 @@ namespace QubicRed.Apps
 			Activated = false;
 
 			base.OnDeactivate(e);
+		}
+
+		protected override void OnResizeEnd(EventArgs e)
+		{
+			if (IsHandleCreated)
+				ResizeChat(true);
+
+			base.OnResizeEnd(e);
 		}
 
 		private void LoginButton_MouseClick(object sender, MouseEventArgs e)
