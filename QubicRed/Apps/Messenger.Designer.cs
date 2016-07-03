@@ -47,6 +47,12 @@
 			this.CompressLabel = new System.Windows.Forms.Label();
 			this.CompressIcon = new System.Windows.Forms.PictureBox();
 			this.ChatContainer = new System.Windows.Forms.Panel();
+			this.UserTyping = new System.Windows.Forms.Label();
+			this.UploadDropHere = new System.Windows.Forms.Label();
+			this.UploadContainer = new System.Windows.Forms.Panel();
+			this.UploadHiddenItems = new System.Windows.Forms.Label();
+			this.UploadProgressPercent = new System.Windows.Forms.Label();
+			this.UploadTotalProgressBar = new System.Windows.Forms.Panel();
 			this.ChatUnreadMessage = new System.Windows.Forms.Label();
 			this.ChatMessageContainer = new System.Windows.Forms.Panel();
 			this.SendIcon = new System.Windows.Forms.PictureBox();
@@ -102,6 +108,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.NewIcon)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.CompressIcon)).BeginInit();
 			this.ChatContainer.SuspendLayout();
+			this.UploadContainer.SuspendLayout();
 			this.ChatMessageContainer.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.SendIcon)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.EmojiIcon)).BeginInit();
@@ -361,6 +368,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ChatContainer.BackColor = System.Drawing.Color.White;
+			this.ChatContainer.Controls.Add(this.UserTyping);
+			this.ChatContainer.Controls.Add(this.UploadDropHere);
+			this.ChatContainer.Controls.Add(this.UploadContainer);
 			this.ChatContainer.Controls.Add(this.ChatUnreadMessage);
 			this.ChatContainer.Controls.Add(this.ChatMessageContainer);
 			this.ChatContainer.Controls.Add(this.ChatInfo);
@@ -371,6 +381,87 @@
 			this.ChatContainer.Size = new System.Drawing.Size(978, 696);
 			this.ChatContainer.TabIndex = 3;
 			this.ChatContainer.Paint += new System.Windows.Forms.PaintEventHandler(this.ChatContainer_Paint);
+			// 
+			// UserTyping
+			// 
+			this.UserTyping.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.UserTyping.AutoSize = true;
+			this.UserTyping.BackColor = System.Drawing.Color.Transparent;
+			this.UserTyping.Location = new System.Drawing.Point(427, 125);
+			this.UserTyping.Name = "UserTyping";
+			this.UserTyping.Size = new System.Drawing.Size(102, 19);
+			this.UserTyping.TabIndex = 3;
+			this.UserTyping.Text = "User is typing...";
+			this.UserTyping.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.UserTyping.Visible = false;
+			// 
+			// UploadDropHere
+			// 
+			this.UploadDropHere.AllowDrop = true;
+			this.UploadDropHere.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(0)))), ((int)(((byte)(100)))), ((int)(((byte)(0)))));
+			this.UploadDropHere.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.UploadDropHere.Font = new System.Drawing.Font("Leelawadee UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+			this.UploadDropHere.ForeColor = System.Drawing.Color.White;
+			this.UploadDropHere.Location = new System.Drawing.Point(1, 115);
+			this.UploadDropHere.Name = "UploadDropHere";
+			this.UploadDropHere.Size = new System.Drawing.Size(977, 531);
+			this.UploadDropHere.TabIndex = 3;
+			this.UploadDropHere.Text = "DROP FILES HERE";
+			this.UploadDropHere.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.UploadDropHere.Visible = false;
+			this.UploadDropHere.DragDrop += new System.Windows.Forms.DragEventHandler(this.InnerChatContainer_DragDrop);
+			this.UploadDropHere.DragEnter += new System.Windows.Forms.DragEventHandler(this.InnerChatContainer_DragEnter);
+			this.UploadDropHere.DragLeave += new System.EventHandler(this.InnerChatContainer_DragLeave);
+			// 
+			// UploadContainer
+			// 
+			this.UploadContainer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.UploadContainer.Controls.Add(this.UploadHiddenItems);
+			this.UploadContainer.Controls.Add(this.UploadProgressPercent);
+			this.UploadContainer.Controls.Add(this.UploadTotalProgressBar);
+			this.UploadContainer.Location = new System.Drawing.Point(1, 500);
+			this.UploadContainer.Name = "UploadContainer";
+			this.UploadContainer.Size = new System.Drawing.Size(977, 150);
+			this.UploadContainer.TabIndex = 2;
+			this.UploadContainer.Visible = false;
+			// 
+			// UploadHiddenItems
+			// 
+			this.UploadHiddenItems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.UploadHiddenItems.BackColor = System.Drawing.Color.Transparent;
+			this.UploadHiddenItems.Font = new System.Drawing.Font("Leelawadee UI", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+			this.UploadHiddenItems.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+			this.UploadHiddenItems.Location = new System.Drawing.Point(699, 2);
+			this.UploadHiddenItems.Name = "UploadHiddenItems";
+			this.UploadHiddenItems.Size = new System.Drawing.Size(139, 147);
+			this.UploadHiddenItems.TabIndex = 2;
+			this.UploadHiddenItems.Text = "+1";
+			this.UploadHiddenItems.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// UploadProgressPercent
+			// 
+			this.UploadProgressPercent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.UploadProgressPercent.BackColor = System.Drawing.Color.Transparent;
+			this.UploadProgressPercent.Font = new System.Drawing.Font("Leelawadee UI", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+			this.UploadProgressPercent.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+			this.UploadProgressPercent.Location = new System.Drawing.Point(838, 2);
+			this.UploadProgressPercent.Name = "UploadProgressPercent";
+			this.UploadProgressPercent.Size = new System.Drawing.Size(139, 147);
+			this.UploadProgressPercent.TabIndex = 1;
+			this.UploadProgressPercent.Text = "0%";
+			this.UploadProgressPercent.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// UploadTotalProgressBar
+			// 
+			this.UploadTotalProgressBar.BackColor = System.Drawing.Color.Green;
+			this.UploadTotalProgressBar.Location = new System.Drawing.Point(0, 0);
+			this.UploadTotalProgressBar.Name = "UploadTotalProgressBar";
+			this.UploadTotalProgressBar.Size = new System.Drawing.Size(100, 2);
+			this.UploadTotalProgressBar.TabIndex = 0;
 			// 
 			// ChatUnreadMessage
 			// 
@@ -407,7 +498,7 @@
 			// 
 			this.SendIcon.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.SendIcon.Dock = System.Windows.Forms.DockStyle.Right;
-			this.SendIcon.Image = global::QubicRed.Properties.Resources.send;
+			this.SendIcon.Image = global::QubicRed.Properties.Resources.send_disabled;
 			this.SendIcon.Location = new System.Drawing.Point(917, 0);
 			this.SendIcon.Name = "SendIcon";
 			this.SendIcon.Size = new System.Drawing.Size(60, 50);
@@ -659,6 +750,7 @@
 			// 
 			// InnerChatContainer
 			// 
+			this.InnerChatContainer.AllowDrop = true;
 			this.InnerChatContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -669,6 +761,9 @@
 			this.InnerChatContainer.Name = "InnerChatContainer";
 			this.InnerChatContainer.Size = new System.Drawing.Size(993, 527);
 			this.InnerChatContainer.TabIndex = 2;
+			this.InnerChatContainer.DragDrop += new System.Windows.Forms.DragEventHandler(this.InnerChatContainer_DragDrop);
+			this.InnerChatContainer.DragEnter += new System.Windows.Forms.DragEventHandler(this.InnerChatContainer_DragEnter);
+			this.InnerChatContainer.DragLeave += new System.EventHandler(this.InnerChatContainer_DragLeave);
 			// 
 			// NoChatSelectedLabel
 			// 
@@ -681,6 +776,7 @@
 			this.NoChatSelectedLabel.TabIndex = 1;
 			this.NoChatSelectedLabel.Text = "Login to start chatting with your friends...";
 			this.NoChatSelectedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.NoChatSelectedLabel.Click += new System.EventHandler(this.NoChatSelectedLabel_Click);
 			// 
 			// ViewInLine
 			// 
@@ -929,6 +1025,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.NewIcon)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.CompressIcon)).EndInit();
 			this.ChatContainer.ResumeLayout(false);
+			this.ChatContainer.PerformLayout();
+			this.UploadContainer.ResumeLayout(false);
 			this.ChatMessageContainer.ResumeLayout(false);
 			this.ChatMessageContainer.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.SendIcon)).EndInit();
@@ -1016,5 +1114,11 @@
 		private CustomControls.RoundedPictureBox RecipientImage;
 		private System.Windows.Forms.Label ChatUnreadMessage;
 		private CustomControls.ClickThroughPanel BorderRight;
+		private System.Windows.Forms.Panel UploadContainer;
+		private System.Windows.Forms.Panel UploadTotalProgressBar;
+		private System.Windows.Forms.Label UploadProgressPercent;
+		private System.Windows.Forms.Label UploadHiddenItems;
+		private System.Windows.Forms.Label UploadDropHere;
+		private System.Windows.Forms.Label UserTyping;
 	}
 }

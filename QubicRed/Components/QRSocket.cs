@@ -46,6 +46,7 @@ namespace QubicRed.Components
 			WebSocket.On("moduleregistered", (data) => { SocketEvent?.Invoke(new SocketEvent("moduleregistered", data)); });
 			WebSocket.On("friendslist", (data) => { SocketEvent?.Invoke(new SocketEvent("friendslist", data)); });
 			WebSocket.On("conversations", (data) => { SocketEvent?.Invoke(new SocketEvent("conversations", data)); });
+			WebSocket.On("typing", (data) => { SocketEvent?.Invoke(new SocketEvent("typing", data)); });
 		}
 
 		public void Send(string eventName, SocketMessage data)

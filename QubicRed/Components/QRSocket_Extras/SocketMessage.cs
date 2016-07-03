@@ -10,7 +10,8 @@ namespace QubicRed.Components.QRSocket_Extras
 
 		public SocketMessage(object data)
 		{
-			string d = data.ToString();
+			Data = JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(data));
+			/*string d = data.ToString();
 			string[] split = d.Split('\n');
 
 			foreach (string s in split)
@@ -19,7 +20,7 @@ namespace QubicRed.Components.QRSocket_Extras
 
 				if (string.IsNullOrWhiteSpace(val))
 					continue;
-				if (val == "}" || val == "{")
+				if (val == "}" || val == "{" || val == "]" || val == "[")
 					continue;
 				if (val.EndsWith(","))
 					val = val.Substring(0, val.Length - 1);
@@ -39,7 +40,7 @@ namespace QubicRed.Components.QRSocket_Extras
 					Data.Add(name, value);
 				else
 					Data[name] = value;
-			}
+			}*/
 		}
 
 		public SocketMessage(params object[][] data)

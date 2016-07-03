@@ -6,23 +6,26 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QubicRed.CustomControls.Messenger;
-using Dropbox.Api;
 using SocketMessage = QubicRed.Components.QRSocket_Extras.SocketMessage;
 using System.IO;
 using System.Threading.Tasks;
-using System.Text;
-using Dropbox.Api.Files;
 using System.Drawing.Imaging;
+using Renci.SshNet;
 using System.Net;
+using System.Text;
 
 namespace QubicRed.Apps
 {
 	public partial class Messenger : QRDF
 	{
+		private const string REMOTE_IMAGE_LOCATION = "ftp://f5-preview.runhosting.com/apps/messenger/images/";
+
 		public UserInfo CurrentUser { get { return currentUser; } set { UpdateCurrentUser(value); } }
 		public UserInfo RecipientUser { get { return recipientUser; } set { UpdateRecipientUser(value); } }
 		public System.Media.SoundPlayer NotificationSound { get; protected set; }
 		public new bool Activated { get; protected set; }
+		public Reply.ContentType ChatType { get; protected set; } = Reply.ContentType.String;
+		public bool Uploading { get; set; }
 
 		private UserInfo currentUser = null;
 		private UserInfo recipientUser = null;
@@ -33,11 +36,25 @@ namespace QubicRed.Apps
 		private bool alternateChat = true;
 		private int unreadMessages = 0;
 		private DateTime lastNotification = DateTime.Now;
+		private string[] pictureURLs;
+		private long uploadTotalSize = 0;
+		private long uploadProgressSize = 0;
+		private FormWindowState currentState;
 
 		protected Dictionary<string, string> PreDefinedMessage = new Dictionary<string, string>()
 		{
 			{ "SelectChat", "Select a chat from the left to begin..." },
 			{ "TypeRecipient", "Type a message to " }
+		};
+
+		protected string[] SupportedExtensions = new string[]
+		{
+			".png",
+			".jpg",
+			".bmp",
+			".jpeg",
+			".tiff",
+			".gif"
 		};
 
 		public Messenger()
@@ -53,10 +70,17 @@ namespace QubicRed.Apps
 			LoginOverlay.BringToFront();
 
 			NotificationSound = new System.Media.SoundPlayer(@"Audio\Messenger_New_Message.wav");
+
+			currentState = WindowState;
 		}
 
 		private void Send()
 		{
+			if(ChatType == Reply.ContentType.Picture)
+			{
+				SendPicture();
+				return;
+			}
 			if (CurrentUser == null || RecipientUser == null)
 				return;
 			string Message = ChatMessage.Text.Trim();
@@ -71,12 +95,63 @@ namespace QubicRed.Apps
 				new object[] { "Sender", CurrentUser.UserName },
 				new object[] { "Message", ChatMessage.Text.Trim() },
 				new object[] { "TimeStamp", DateTime.UtcNow.ToString("MM-dd-yyyy HH:mm:ss") },
-				new object[] { "DataType", 0}
+				new object[] { "DataType", ChatType },
+				new object[] { "Links", new object[] { } }
 			);
 			ClientSocket.Send("message", msg);
 			ChatMessage.Text = PreDefinedMessage["TypeRecipient"] + RecipientUser.UserName;
 			ChatMessage.SelectionLength = ChatMessage.SelectionStart = 0;
 			ChatMessage.ForeColor = Color.FromArgb(150, 150, 150);
+			ChatType = Reply.ContentType.String;
+			SendIcon.Image = Properties.Resources.send_disabled;
+
+			ClientSocket.Send("typing", new SocketMessage(
+				new object[] { "typing", false },
+				new object[] { "RecipientID", RecipientUser.ID }
+			));
+		}
+
+		private void SendPicture()
+		{
+			if(Uploading)
+			{
+				MessageBox.Show("Please wait until the uploading is complete!");
+				return;
+			}
+			if (CurrentUser == null || RecipientUser == null)
+				return;
+			string message = ChatMessage.Text.Trim();
+			if (message == PreDefinedMessage["TypeRecipient"] + RecipientUser.UserName)
+				message = "";
+			SocketMessage msg = new SocketMessage(
+				new object[] { "ConversationID", ConversationID },
+				new object[] { "SenderID", CurrentUser.ID },
+				new object[] { "RecipientID", RecipientUser.ID },
+				new object[] { "Sender", CurrentUser.UserName },
+				new object[] { "Message", message },
+				new object[] { "TimeStamp", DateTime.UtcNow.ToString("MM-dd-yyyy HH:mm:ss") },
+				new object[] { "DataType", ChatType },
+				new object[] { "Links", pictureURLs }
+			);
+			ClientSocket.Send("message", msg);
+			ChatMessage.Text = PreDefinedMessage["TypeRecipient"] + RecipientUser.UserName;
+			ChatMessage.SelectionLength = ChatMessage.SelectionStart = 0;
+			ChatMessage.ForeColor = Color.FromArgb(150, 150, 150);
+			ChatType = Reply.ContentType.String;
+			pictureURLs = null;
+			SendIcon.Image = Properties.Resources.send_disabled;
+
+			foreach (var upPic in UploadContainer.Controls.OfType<UploadPictureBox>())
+				upPic?.Dispose();
+
+			UploadHiddenItems.Text = "";
+			UploadProgressPercent.Text = "0%";
+			UploadContainer.Hide();
+
+			ClientSocket.Send("typing", new SocketMessage(
+				new object[] { "typing", false },
+				new object[] { "RecipientID", RecipientUser.ID }
+			));
 		}
 
 		private void ToggleEmojis() { }
@@ -113,10 +188,17 @@ namespace QubicRed.Apps
 				else
 					msg.Alternate = false;
 
-				int x = msg.Sender.ToLower() == CurrentUser.UserName.ToLower() ?
-				(InnerChatContainer.Width - msg.Width - 30) : 20;
+				Invoke(new MethodInvoker(() =>
+				{
+					msg.MaximumSize = new Size(((InnerChatContainer.Width - 20) / 2) - 20, int.MaxValue);
+					msg.FormatSize();
 
-				Invoke(new MethodInvoker(() => { msg.Location = new Point(x, y); }));
+					int x = msg.Sender.ToLower() == CurrentUser.UserName.ToLower() ?
+						(InnerChatContainer.Width - msg.Width - 30) : 20;
+
+					msg.Location = new Point(x, y);
+				}));
+
 				y += msg.Height + 10;
 			}
 
@@ -129,6 +211,29 @@ namespace QubicRed.Apps
 				ChatUnreadMessage.Show();
 				InnerChatContainer.AutoScrollPosition = new Point(-autoScroll.X, -autoScroll.Y);
 			}
+
+			if (Uploading)
+			{
+				int maxX = UploadHiddenItems.Location.X;
+				int hidden = 0;
+				foreach (UploadPictureBox upBox in UploadContainer.Controls.OfType<UploadPictureBox>())
+				{
+					if (upBox.Location.X + upBox.Width >= maxX)
+					{
+						hidden++;
+						upBox.Visible = false;
+					}
+					else if (!upBox.Visible)
+						upBox.Visible = true;
+				}
+
+				if (hidden == 0)
+					UploadHiddenItems.Visible = false;
+				else
+					UploadHiddenItems.Text = "+" + hidden;
+			}
+
+			UserTyping.Location = new Point((ChatContainer.Width / 2 - (UserTyping.Width / 2)), UserTyping.Location.Y);
 		}
 
 		private void Login()
@@ -174,21 +279,6 @@ namespace QubicRed.Apps
 			}
 
 			List<Friend> friendList = ExtJson.DeserializeToList<Friend>(JsonConvert.SerializeObject(e)).ToList();
-
-			//if (friendList.Count > 0)
-				//NoChatsLabel?.Dispose();
-
-			/*foreach (Friend friend in friendList)
-			{
-				UserInfo userInfo = new UserInfo(friend.FriendID, "UserName", "RealName", "Description", null);
-				FriendBlock block = new FriendBlock(userInfo, new Size(SideBarContainer.Width, 75));
-				block.AppColor = AppColor;
-
-				block.MouseClick += FriendBlock_MouseClick;
-
-				block.Location = new Point(0, SideBarContainer.Controls.Count * 75);
-				SideBarContainer.Controls.Add(block);
-			}*/
 
 			ClientSocket.Send("conversations", new SocketMessage(new object[] { "UserName", CurrentUser.UserName }));
 		}
@@ -257,6 +347,7 @@ namespace QubicRed.Apps
 			RecipientRealName.Text = recipientUser.RealName;
 			RecipientDescription.Text = recipientUser.Description;
 			RecipientImage.Image = recipientUser.UserImage.DownloadImage(RecipientImage.Size);
+			RecipientUser.IsTyping += RecipientUser_IsTyping;
 
 			ChatMessage.Text = PreDefinedMessage["TypeRecipient"] + RecipientUser.UserName;
 			ChatMessage.SelectionLength = ChatMessage.SelectionStart = 0;
@@ -296,19 +387,23 @@ namespace QubicRed.Apps
 			ResizeChat();
 		}
 
-		private async Task<bool> Upload(string fileName)
+		private void RecipientUser_IsTyping()
 		{
-			if (!File.Exists(fileName))
-				return false;
-
-			using (DropboxClient dbx = new DropboxClient("iuvg5K38P2EAAAAAAAAGkRJPuLrbD0tShTADR4vgbs7TRnFu3IXD32l48e4KQ6UN"))
+			Invoke(new MethodInvoker(() =>
 			{
-				Progress<double> progress = new Progress<double>();
-				progress.ProgressChanged += Upload_ProgressChanged;
-				await Dropbox.Upload(dbx, fileName, "/" + Path.GetFileName(fileName), progress);
-			}
+				bool typing = RecipientUser.UserTyping;
 
-			return true;
+				if (typing)
+				{
+					if (!UserTyping.Visible)
+						UserTyping.Show();
+					UserTyping.Text = RecipientUser.UserName + " is typing...";
+					UserTyping.BringToFront();
+					UserTyping.Location = new Point(ChatContainer.Width / 2 - (UserTyping.Width / 2), UserTyping.Location.Y);
+				}
+				else
+					UserTyping.Hide();
+			}));
 		}
 
 		private void Upload_ProgressChanged(object sender, double e)
@@ -368,7 +463,13 @@ namespace QubicRed.Apps
 				if (ConversationID == -1)
 					ConversationID = reply.ConversationID;
 
-				MessageBlock msgBlock = new MessageBlock();
+				MessageBlock msgBlock;
+
+				if (reply.DataType == Reply.ContentType.Picture)
+					msgBlock = new MessageBlock(reply.Links, reply.Message);
+				else
+					msgBlock = new MessageBlock();
+
 				msgBlock.Message = reply.Message;
 				msgBlock.Sender = reply.SenderID == CurrentUser.ID ? CurrentUser.UserName : RecipientUser.UserName;
 				msgBlock.Date = DateTime.Parse(reply.TimeStamp).ToString("h:mm tt");
@@ -416,6 +517,14 @@ namespace QubicRed.Apps
 
 		private void ChatMessage_KeyUp(object sender, KeyEventArgs e)
 		{
+			if(RecipientUser != null)
+			{
+				ClientSocket.Send("typing", new SocketMessage(
+						new object[] { "typing", !(ChatMessage.Text.Length == 0) },
+						new object[] { "RecipientID", RecipientUser.ID }
+					));
+			}
+
 			if (ChatMessage.Text.Length == 0)
 			{
 				if (RecipientUser == null)
@@ -430,6 +539,10 @@ namespace QubicRed.Apps
 				e.Handled = true;
 				e.SuppressKeyPress = true;
 			}
+
+			SendIcon.Image = (ChatMessage.ForeColor == Color.Black ?
+				Properties.Resources.send :
+				Properties.Resources.send_disabled);
 		}
 
 		private void ChatMessage_TextChanged(object sender, EventArgs e)
@@ -540,10 +653,24 @@ namespace QubicRed.Apps
 
 		private void ClientSocket_OnMessagereceived(SocketMessage e)
 		{
+			string dataString = e.GetValue("DataType") == null ? "" : e.GetValue("DataType").ToString();
+			Reply.ContentType dataType = (Reply.ContentType)Enum.Parse(typeof(Reply.ContentType), dataString);
+
+			string[] urls = null;
+
+			if(e.Data.ContainsKey("Links"))
+				urls = JsonConvert.DeserializeObject<string[]>(JsonConvert.SerializeObject(e.Data["Links"]));
+
+			MessageBlock block;
+
+			if (dataType == Reply.ContentType.Picture && urls != null)
+				block = new MessageBlock(urls, e.GetValue("Message").ToString());
+			else
+				block = new MessageBlock();
+
 			string timeStamp = e.GetValue("TimeStamp").ToString();
 			timeStamp = DateTime.Parse(timeStamp).ToString("h:mm tt");
 
-			MessageBlock block = new MessageBlock();
 			block.Message = e.GetValue("Message").ToString();
 			block.Sender = e.GetValue("Sender").ToString();
 			block.Date = timeStamp;
@@ -552,13 +679,14 @@ namespace QubicRed.Apps
 			Invoke(new MethodInvoker(() =>
 			{
 				block.FormatSize();
+
 				InnerChatContainer.Controls.Add(block);
 
 				SelectedChat.LastMessage = e.GetValue("Message").ToString();
 				SelectedChat.TimeStamp = timeStamp;
 			}));
 
-			if((DateTime.Now - lastNotification).TotalSeconds > 5)
+			if((DateTime.Now - lastNotification).TotalSeconds > 5 && block.Sender != CurrentUser.UserName && !Activated)
 			{
 				lastNotification = DateTime.Now;
 				NotificationSound.Play();
@@ -591,24 +719,17 @@ namespace QubicRed.Apps
 				case "conversations":
 					ConversationsResult(e.Data);
 					break;
+				case "typing":
+					SocketMessage msg = new SocketMessage(e.Data);
+					if (RecipientUser != null)
+						RecipientUser.UserTyping = bool.Parse(msg.GetValue("typing").ToString());
+					break;
 			}
 		}
 
 		protected override void OnShown(EventArgs e)
 		{
 			ClientSocket.Init();
-
-			OpenFileDialog ofd = new OpenFileDialog();
-			ofd.Multiselect = false;
-			if (ofd.ShowDialog() == DialogResult.OK)
-			{
-				// Dropbox
-				Task.Run(() => { return Upload(ofd.FileName); });
-
-				// Mega.NZ
-				//MegaNZ.UploadWithProgression(@"E:\Pictures\Windows 10 Google\001.png");
-			}
-			ofd.Dispose();
 
 			base.OnShown(e);
 		}
@@ -629,10 +750,21 @@ namespace QubicRed.Apps
 
 		protected override void OnResizeEnd(EventArgs e)
 		{
+			base.OnResizeEnd(e);
+
 			if (IsHandleCreated)
 				ResizeChat(true);
+		}
 
-			base.OnResizeEnd(e);
+		protected override void WndProc(ref Message m)
+		{
+			if (m.Msg == 0x0005)
+			{
+				if (WindowState != currentState)
+					ResizeChat(true);
+				currentState = WindowState;
+			}
+			base.WndProc(ref m);
 		}
 
 		private void LoginButton_MouseClick(object sender, MouseEventArgs e)
@@ -680,15 +812,186 @@ namespace QubicRed.Apps
 			InnerChatContainer.ScrollControlIntoView(InnerChatContainer.Controls[InnerChatContainer.Controls.Count - 1]);
 			ChatUnreadMessage.Hide();
 		}
+
+		private void NoChatSelectedLabel_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void InnerChatContainer_DragEnter(object sender, DragEventArgs e)
+		{
+			if (e.Data.GetDataPresent(DataFormats.FileDrop))
+			{
+				e.Effect = DragDropEffects.Copy;
+				UploadDropHere.Show();
+				UploadDropHere.BringToFront();
+			}
+			else
+				UploadDropHere.Hide();
+		}
+
+		private void InnerChatContainer_DragLeave(object sender, EventArgs e)
+		{
+			UploadDropHere.Hide();
+		}
+
+		private void InnerChatContainer_DragDrop(object sender, DragEventArgs e)
+		{
+			UploadDropHere.Hide();
+
+			string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
+
+			if (files == null)
+				return;
+			if (files.Length <= 0)
+				return;
+
+			foreach (string file in files)
+			{
+				if (!SupportedExtensions.Contains(Path.GetExtension(file)))
+				{
+					MessageBox.Show("Unsupported file detected!");
+					return;
+				}
+			}
+
+			string[] serverNames = new string[files.Length];
+
+			foreach (var upPic in UploadContainer.Controls.OfType<UploadPictureBox>())
+				upPic?.Dispose();
+
+			UploadTotalProgressBar.Size = new Size(0, UploadTotalProgressBar.Height);
+
+			ChatType = Reply.ContentType.Picture;
+			Uploading = true;
+			uploadTotalSize = uploadProgressSize = 0;
+			UploadContainer.Show();
+			int x, y;
+			int h = UploadContainer.Height - 10;
+			int cc = 1;
+
+			x = y = 10;
+
+			if (files.Length > 5)
+				UploadHiddenItems.Text = "+" + (files.Length - 5).ToString();
+
+			UploadHiddenItems.Visible = files.Length > 5;
+
+			foreach (string file in files)
+			{
+				uploadTotalSize += new FileInfo(file).Length;
+
+				if (cc > 5)
+					continue;
+
+				UploadPictureBox upPicture = new UploadPictureBox(file, new Size(h, h));
+				upPicture.Location = new Point(x, y);
+
+				UploadContainer.Controls.Add(upPicture);
+
+				x += upPicture.Width + 5;
+
+				cc++;
+			}
+			Task.Run(async () =>
+			{
+				UploadPictureBox[] upBoxes = UploadContainer.Controls.OfType<UploadPictureBox>().ToArray();
+
+				for(int c = 0; c < upBoxes.Length; c++)
+					await upBoxes[c].LoadImage(upBoxes[c].Name);
+
+				for(int c = 0; c < upBoxes.Length; c++)
+				{
+					string dest = REMOTE_IMAGE_LOCATION + Guid.NewGuid() + Path.GetExtension(upBoxes[c].Name);
+					serverNames[c] = dest;
+					await upBoxes[c].Upload(upBoxes[c].Name,
+						dest,
+						new NetworkCredential("2159860_user", "Qub1cR3dSt0rag3"),
+						UploadProgress);
+				}
+
+				if(files.Length > 5) // Upload all the files that aren't actually shown in the preview bar
+				{
+					for (int i = 5; i < files.Length; i++)
+					{
+						const int CHUNK_SIZE = (1024 * 1024) / 2;
+						string source = files[i];
+						string destination = REMOTE_IMAGE_LOCATION + Guid.NewGuid() + Path.GetExtension(source);
+						int chunk = CHUNK_SIZE;
+
+						serverNames[i] = destination; 
+
+						FtpWebRequest request = (FtpWebRequest)WebRequest.Create(destination);
+						request.Method = WebRequestMethods.Ftp.UploadFile;
+						request.Credentials = new NetworkCredential("2159860_user", "Qub1cR3dSt0rag3");
+
+						using (Stream inputStream = File.Open(source, FileMode.Open, FileAccess.Read))
+						using (Stream stream = request.GetRequestStream())
+						{
+							request.ContentLength = inputStream.Length;
+
+							if (request.ContentLength <= chunk)
+							{
+								byte[] buffer = new byte[inputStream.Length];
+								inputStream.Read(buffer, 0, buffer.Length);
+								await stream.WriteAsync(buffer, 0, buffer.Length);
+								UploadProgress(buffer.Length);
+							}
+							else
+							{
+								chunk = Math.Min((int)inputStream.Length / 100, CHUNK_SIZE);
+
+								byte[] buffer = new byte[chunk];
+								int totalReadBytesCount = 0;
+								int readBytesCount;
+
+								while ((readBytesCount = inputStream.Read(buffer, 0, buffer.Length)) > 0)
+								{
+									await stream.WriteAsync(buffer, 0, readBytesCount);
+									totalReadBytesCount += readBytesCount;
+									UploadProgress(readBytesCount);
+								}
+							}
+						}
+					}
+				}
+
+				SendIcon.Image = Properties.Resources.send;
+				pictureURLs = serverNames;
+
+				Uploading = false;
+			});
+		}
+
+		private void UploadProgress(long progress)
+		{
+			if(InvokeRequired)
+			{
+				Invoke(new MethodInvoker(() => { UploadProgress(progress); }));
+				return;
+			}
+
+			uploadProgressSize += progress;
+			double percent = (double)uploadProgressSize / (double)uploadTotalSize * 100.0;
+			double percentWidth =  percent * UploadContainer.Width / 100.0;
+			UploadTotalProgressBar.Size = new Size((int)percentWidth, UploadTotalProgressBar.Height);
+			UploadProgressPercent.Text = Math.Round(percent).ToString() + "%";
+		}
 	}
 
 	public class UserInfo : IDisposable
 	{
+		public delegate void Typing();
+		public event Typing IsTyping;
+
 		public int ID { get; set; }
 		public string UserName { get; set; }
 		public string RealName { get; set; }
 		public string Description { get; set; }
 		public string UserImage { get; set; }
+		public bool UserTyping { get { return userTyping; }set { userTyping = value; IsTyping?.Invoke(); } }
+
+		protected bool userTyping = false;
 
 		public UserInfo() { }
 		public UserInfo(int _id, string _username, string _realname, string _description, string _userimage)
@@ -744,14 +1047,21 @@ namespace QubicRed.Apps
 
 	public class Reply
 	{
+		public enum ContentType : int
+		{
+			String,
+			Picture
+		}
+
 		public int ID { get; set; }
 		public int ConversationID { get; set; }
 		public int SenderID { get; set; }
 		public int RecipientID { get; set; }
 		public string Message { get; set; }
 		public string TimeStamp { get; set; }
-		public int DataType { get; set; }
+		public ContentType DataType { get; set; } = ContentType.String;
 		public UserInfo SenderInfo { get; set; }
+		public string[] Links { get; set; }
 	}
 
 

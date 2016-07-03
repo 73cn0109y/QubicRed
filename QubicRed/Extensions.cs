@@ -55,10 +55,13 @@ namespace QubicRed
 			if (url == null)
 				return null;
 
+			if (url.StartsWith("ftp://"))
+				return DownloadFTPImage(url, size);
+
 			string localFile = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase), "Cached", "Images", Path.GetFileName(url));
 			localFile = localFile.Substring(6, localFile.Length - 6);
 
-			if (CacheImageLocations.ContainsKey(url))
+			if (CacheImageLocations.ContainsKey(url) || File.Exists(localFile))
 				return Image.FromFile(localFile).ResizeKeepRatio(size);
 
 			if (!Directory.Exists(Path.GetDirectoryName(localFile)))
@@ -70,6 +73,50 @@ namespace QubicRed
 			CacheImageLocations.Add(url, localFile);
 
 			return Image.FromFile(localFile).ResizeKeepRatio(size);
+		}
+
+		public static Image DownloadFTPImage(this string url, Size size)
+		{
+			if (url == null)
+				return null;
+
+			string localFile = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase), "Cached", "Images", Path.GetFileName(url));
+
+			if (localFile.StartsWith("file:\\"))
+				localFile = localFile.Substring(6, localFile.Length - 6);
+
+			if (File.Exists(localFile))
+				return Image.FromFile(localFile);
+
+			Image image = null;
+
+			FtpWebRequest request = (FtpWebRequest)WebRequest.Create(url);
+			request.Method = WebRequestMethods.Ftp.DownloadFile;
+			request.UseBinary = true;
+			request.Credentials = new NetworkCredential("2159860_user", "Qub1cR3dSt0rag3");
+
+			using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+			using (Stream responseStream = response.GetResponseStream())
+			using (FileStream fs = new FileStream(localFile, FileMode.Create, FileAccess.ReadWrite))
+			{
+				byte[] buffer = new byte[102400];
+				int read = 0;
+				do
+				{
+					read = responseStream.Read(buffer, 0, buffer.Length);
+					fs.Write(buffer, 0, read);
+					fs.Flush();
+				} while (!(read == 0));
+
+				fs.Flush();
+				fs.Close();
+			}
+
+			if (File.Exists(localFile))
+				using (Image img = Image.FromFile(localFile).ResizeKeepRatio(size)) // So we don't lock the file
+					image = img.Clone() as Image;
+
+			return image;
 		}
 
 		public static Bitmap ResizeKeepRatio(this Image image, Size targetSize = default(Size))
