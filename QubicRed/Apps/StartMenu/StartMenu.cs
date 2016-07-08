@@ -15,12 +15,16 @@ namespace QubicRed.Apps
 		private bool togglingVisible = false;
 		private Taskbar taskbar;
 		private bool canLooseFocus = false;
+		private PictureBox SelectedTab;
 
 		public StartMenu(Taskbar _taskbar)
 		{
 			taskbar = _taskbar;
 
 			InitializeComponent();
+
+			SelectedTab = Home;
+			Home.Invalidate();
 
 			using (GraphicsPath gp = new GraphicsPath())
 			{
@@ -53,7 +57,7 @@ namespace QubicRed.Apps
 				while ((read = await file.ReadAsync(buffer, 0, buffer.Length)) != 0)
 					await stream.WriteAsync(buffer, 0, read);
 				using (Bitmap bmp = new Bitmap(Image.FromStream(stream)).Clone(new Rectangle(originPoint.X, originPoint.Y, Width, Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
-				using (TextureBrush textureBrush = new TextureBrush(Image.FromFile("C:/QubicRed/System/Wallpapers/TaskbarDarken.png"), WrapMode.Tile))
+				using (TextureBrush textureBrush = new TextureBrush(Image.FromFile("C:/QubicRed/System/Wallpapers/StartmenuDarken.png"), WrapMode.Tile))
 				using (Graphics g = Graphics.FromImage(bmp))
 				{
 					g.FillRectangle(textureBrush, new Rectangle(Point.Empty, bmp.Size));
@@ -69,19 +73,14 @@ namespace QubicRed.Apps
 
 			canLooseFocus = true;
 		}
-		private Task currentFade;
+
 		public void ToggleVisible(bool forceHide = false)
 		{
-			if(forceHide && togglingVisible)
-			{
-				currentFade.Dispose();
-				togglingVisible = false;
-			}
 			if (togglingVisible)
 				return;
 			if (!TopMost)
 				TopMost = true;
-			currentFade = Task.Run(() =>
+			Task.Run(() =>
 			{
 				togglingVisible = true;
 				Invoke(new MethodInvoker(() =>
@@ -91,7 +90,7 @@ namespace QubicRed.Apps
 						Opacity = 1;
 						while (Opacity > 0)
 						{
-							Opacity -= 0.02;
+							Opacity -= 0.05;
 							System.Threading.Thread.Sleep(10);
 						}
 						Opacity = 0;
@@ -103,17 +102,57 @@ namespace QubicRed.Apps
 						Show();
 						while (Opacity < 1)
 						{
-							Opacity += 0.02;
+							Opacity += 0.05;
 							System.Threading.Thread.Sleep(10);
 						}
 						Opacity = 1;
 						Focus();
 						Activate();
 					}
+
+					if (SelectedTab.Name != "Home")
+					{
+						PictureBox old = SelectedTab;
+						SelectedTab = Home;
+						old.Invalidate();
+						SelectedTab.Invalidate();
+						Controls[old.Name + "Group"].Hide();
+						Controls[SelectedTab.Name + "Group"].Show();
+					}
 				}));
 				togglingVisible = false;
-				currentFade = null;
 			});
+		}
+
+		private void Tab_Paint(object sender, PaintEventArgs e)
+		{
+			PictureBox pb = sender as PictureBox;
+
+			if (pb == null)
+				return;
+
+			if (SelectedTab == pb)
+				using (Pen pen = new Pen(Color.White, 3))
+					e.Graphics.DrawLine(pen, new Point(0, 0), new Point(0, pb.Height));
+		}
+
+		private void Tab_MouseClick(object sender, MouseEventArgs e)
+		{
+			if (((PictureBox)sender) == null)
+				return;
+
+			if (SelectedTab != null)
+			{
+				PictureBox old = SelectedTab;
+				SelectedTab = sender as PictureBox;
+				old.Invalidate();
+				Controls[old.Name + "Group"].Hide();
+			}
+			else
+				SelectedTab = sender as PictureBox;
+
+			SelectedTab.Invalidate();
+			Controls[SelectedTab.Name + "Group"]?.Show();
 		}
 
 		protected override void OnLostFocus(EventArgs e)
@@ -122,6 +161,39 @@ namespace QubicRed.Apps
 				ToggleVisible(true);
 
 			base.OnLostFocus(e);
+		}
+
+		protected override void OnControlAdded(ControlEventArgs e)
+		{
+			e.Control.EnableDoubleBuferring();
+
+			foreach (Control c in e.Control.Controls)
+				c.EnableDoubleBuferring();
+
+			base.OnControlAdded(e);
+		}
+
+		private void SwitchHomeTab_MouseClick(object sender, MouseEventArgs e)
+		{
+			bool next = ((Label)sender).Name == "HomeGroupNext";
+
+			if (next && HomeGroupTitle.Text == "News")
+				return;
+			else if (!next && HomeGroupTitle.Text == "Overview")
+				return;
+
+			if(next)
+			{
+				HomeGroupPrevious.ForeColor = Color.White;
+				HomeGroupNext.ForeColor = Color.FromArgb(150, 150, 150);
+				HomeGroupTitle.Text = "News";
+			}
+			else
+			{
+				HomeGroupPrevious.ForeColor = Color.FromArgb(150, 150, 150);
+				HomeGroupNext.ForeColor = Color.White;
+				HomeGroupTitle.Text = "Overview";
+			}
 		}
 	}
 }

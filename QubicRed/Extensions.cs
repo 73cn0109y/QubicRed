@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -163,6 +164,12 @@ namespace QubicRed
 			}
 
 			return scaledImage;
+		}
+
+		public static void EnableDoubleBuferring(this Control control)
+		{
+			var property = typeof(Control).GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
+			property.SetValue(control, true, null);
 		}
 	}
 }

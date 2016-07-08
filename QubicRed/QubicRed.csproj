@@ -263,6 +263,36 @@
   <ItemGroup>
     <None Include="Resources\BootLoop.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Taskbar\apps.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Taskbar\home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Taskbar\power.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Taskbar\search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Taskbar\user.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Taskbar\taskbar_apps.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Taskbar\taskbar_home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Taskbar\taskbar_power.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Taskbar\taskbar_search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Taskbar\taskbar_user.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
