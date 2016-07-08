@@ -11,36 +11,6 @@ namespace QubicRed.Components.QRSocket_Extras
 		public SocketMessage(object data)
 		{
 			Data = JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(data));
-			/*string d = data.ToString();
-			string[] split = d.Split('\n');
-
-			foreach (string s in split)
-			{
-				string val = s.Trim();
-
-				if (string.IsNullOrWhiteSpace(val))
-					continue;
-				if (val == "}" || val == "{" || val == "]" || val == "[")
-					continue;
-				if (val.EndsWith(","))
-					val = val.Substring(0, val.Length - 1);
-
-				string name = val.Substring(1, val.IndexOf(':') - 2);
-				string value = val.Substring(val.IndexOf(':') + 1, val.Length - val.IndexOf(':') - 1).Trim();
-
-				if (name.StartsWith("\"") || name.StartsWith("'"))
-					name = name.Substring(1, name.Length - 2);
-				if (value.StartsWith("\"") || value.StartsWith("'"))
-					value = value.Substring(1, value.Length - 2);
-
-				value = value.Replace("\\\"", "\"");
-				value = value.Replace("\\'", "'");
-
-				if (!Data.ContainsKey(name))
-					Data.Add(name, value);
-				else
-					Data[name] = value;
-			}*/
 		}
 
 		public SocketMessage(params object[][] data)

@@ -822,12 +822,38 @@ namespace QubicRed.Apps
 		{
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))
 			{
-				e.Effect = DragDropEffects.Copy;
-				UploadDropHere.Show();
-				UploadDropHere.BringToFront();
+				string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
+				bool supported = true;
+				foreach (string file in files)
+				{
+					if (!SupportedExtensions.Contains(Path.GetExtension(file)))
+					{
+						supported = false;
+						break;
+					}
+				}
+
+				if (supported)
+				{
+					e.Effect = DragDropEffects.Copy;
+					UploadDropHere.BackColor = Color.FromArgb(200, 0, 100, 0);
+					UploadDropHere.Text = "DROP FILES HERE";
+				}
+				else
+				{
+					UploadDropHere.BackColor = Color.FromArgb(200, 100, 0, 0);
+					UploadDropHere.Text = "UNSUPPORTED FILE TYPE";
+				}
 			}
 			else
-				UploadDropHere.Hide();
+			{
+				e.Effect = DragDropEffects.None;
+				UploadDropHere.BackColor = Color.FromArgb(200, 100, 0, 0);
+				UploadDropHere.Text = "UNSUPPORTED FILE TYPE";
+			}
+
+			UploadDropHere.Show();
+			UploadDropHere.BringToFront();
 		}
 
 		private void InnerChatContainer_DragLeave(object sender, EventArgs e)
@@ -845,15 +871,6 @@ namespace QubicRed.Apps
 				return;
 			if (files.Length <= 0)
 				return;
-
-			foreach (string file in files)
-			{
-				if (!SupportedExtensions.Contains(Path.GetExtension(file)))
-				{
-					MessageBox.Show("Unsupported file detected!");
-					return;
-				}
-			}
 
 			string[] serverNames = new string[files.Length];
 

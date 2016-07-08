@@ -41,6 +41,13 @@ namespace QubicRed.Components
 			{
 				SocketEvent?.Invoke(new SocketEvent("Connected", false));
 			});
+			WebSocket.On(Socket.EVENT_CONNECT_ERROR, (data) =>
+			{
+				Exception e = data as Exception;
+				if (e == null)
+					throw new Exception("Unknown Connection Error!");
+				throw e.InnerException.InnerException;
+			});
 			WebSocket.On("message", (data) => { OnMessageReceived?.Invoke(new SocketMessage(data)); });
 			WebSocket.On("login", (data) => { SocketEvent?.Invoke(new SocketEvent("login", data)); });
 			WebSocket.On("moduleregistered", (data) => { SocketEvent?.Invoke(new SocketEvent("moduleregistered", data)); });

@@ -102,7 +102,7 @@ namespace QubicRed.CustomControls.Messenger
 			else
 			{
 				using (Image img = filePath.DownloadFTPImage(Size))
-					Image = new Bitmap(img, ClientSize).ResizeKeepRatio();
+					Image = img.ResizeKeepRatio();
 			}
 
 			return false;
