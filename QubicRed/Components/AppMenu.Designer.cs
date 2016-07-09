@@ -1,6 +1,6 @@
 ﻿namespace QubicRed.Components
 {
-	partial class QRSocket
+	partial class AppMenu
 	{
 		/// <summary>
 		/// Required designer variable.

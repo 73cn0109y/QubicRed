@@ -81,10 +81,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Apps\Messenger.cs">
+    <Compile Include="Apps\Messenger\Messenger.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Apps\Messenger.Designer.cs">
+    <Compile Include="Apps\Messenger\Messenger.Designer.cs">
       <DependentUpon>Messenger.cs</DependentUpon>
     </Compile>
     <Compile Include="Apps\StartMenu\StartMenu.cs">
@@ -104,6 +104,12 @@
     </Compile>
     <Compile Include="Boot.Designer.cs">
       <DependentUpon>Boot.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\AppMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\AppMenu.Designer.cs">
+      <DependentUpon>AppMenu.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\QRSocket.cs">
       <SubType>Component</SubType>
@@ -158,7 +164,7 @@
       <DependentUpon>QRDF.cs</DependentUpon>
     </Compile>
     <Compile Include="Win32.cs" />
-    <EmbeddedResource Include="Apps\Messenger.resx">
+    <EmbeddedResource Include="Apps\Messenger\Messenger.resx">
       <DependentUpon>Messenger.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Apps\StartMenu\StartMenu.resx">
@@ -292,6 +298,42 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Taskbar\taskbar_user.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Messenger\messenger_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Calculator\calculator_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Gallery\gallery_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Mail\mail_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Manager\manager_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Music\music_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\News\news_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Notes\notes_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ProjectWeb\projectweb_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Settings\settings_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SocialHub\socialhub_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Store\store_icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

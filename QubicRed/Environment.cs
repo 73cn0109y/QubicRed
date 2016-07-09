@@ -1,4 +1,6 @@
 ﻿using System;
+using QubicRed.Apps;
+using QubicRed.Components;
 
 namespace QubicRed
 {
@@ -20,9 +22,11 @@ namespace QubicRed
 		public static class User
 		{
 			public static string Root { get { return Environment.Root + "Users/"; } }
-			public static string CurrentUser { get; set; } = "Guest";
-			public static string RealName { get; set; } = "Guest User";
-			public static string UserDirectory { get { return Root + CurrentUser + "/"; } }
+			public static string UserName { get; set; } = "Admin";
+			public static string RealName { get; set; } = "Administrator";
+			public static string UserDirectory { get { return Root + UserName + "/"; } }
+			public static string Wallpaper { get; set; } = "001.png";
+			public static string Avatar { get; set; } = "avatar.png";
 		}
 	}
 }

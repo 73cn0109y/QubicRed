@@ -226,7 +226,8 @@ namespace QubicRed.CustomControls.Messenger
 			}
 			if (file.StartsWith("file:\\"))
 				file = file.Substring(6, file.Length - 6);
-			System.Diagnostics.Process.Start(file);
+			// Will not work without explorer running
+			System.Diagnostics.Process.Start(file); 
 		}
 	}
 }

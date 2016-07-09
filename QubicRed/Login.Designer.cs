@@ -39,6 +39,7 @@
 			// 
 			// UserAvatar
 			// 
+			this.UserAvatar.Image = null;
 			this.UserAvatar.Location = new System.Drawing.Point(56, 3);
 			this.UserAvatar.Name = "UserAvatar";
 			this.UserAvatar.RoundCorners = QubicRed.Corners.All;
@@ -54,7 +55,7 @@
 			this.UserName.Name = "UserName";
 			this.UserName.Size = new System.Drawing.Size(103, 23);
 			this.UserName.TabIndex = 1;
-			this.UserName.Text = "Test User";
+			this.UserName.Text = "Administrator";
 			this.UserName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// UserGroup

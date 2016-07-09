@@ -10,7 +10,6 @@ namespace QubicRed
 {
 	public partial class Desktop : Form
 	{
-		public Dictionary<string, object> UserSettings { get; protected set; }
 		public Apps.Taskbar Taskbar { get; protected set; }
 
 		public Desktop(int i = 0)
@@ -26,13 +25,11 @@ namespace QubicRed
 			Taskbar.Show();
 		}
 
-		public async Task LoadAsync(Dictionary<string, object> userSettings)
+		public async Task LoadAsync()
 		{
-			UserSettings = userSettings;
+			await LoadWallpaper(Environment.User.Wallpaper);
 
-			await LoadWallpaper(UserSettings["wallpaper"].ToString());
-
-			await Taskbar.LoadAsync(UserSettings);
+			await Taskbar.LoadAsync();
 
 			return;
 		}
@@ -50,7 +47,7 @@ namespace QubicRed
 				int read;
 				while ((read = await file.ReadAsync(buffer, 0, buffer.Length)) != 0)
 					await stream.WriteAsync(buffer, 0, read);
-				using (Bitmap bmp = new Bitmap(Image.FromStream(stream)).Clone(ClientRectangle, System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
+				using (Bitmap bmp = new Bitmap(Image.FromStream(stream).ResizeKeepRatio(Size)).Clone(ClientRectangle, System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
 					BackgroundImage = bmp.Clone() as Image;
 			}
 

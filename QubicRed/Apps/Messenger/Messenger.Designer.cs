@@ -153,6 +153,7 @@
 			this.UserPicture.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.UserPicture.BackColor = System.Drawing.Color.Transparent;
+			this.UserPicture.Image = null;
 			this.UserPicture.Location = new System.Drawing.Point(5, 5);
 			this.UserPicture.Name = "UserPicture";
 			this.UserPicture.RoundCorners = QubicRed.Corners.All;
@@ -606,6 +607,7 @@
 			// RecipientImage
 			// 
 			this.RecipientImage.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.RecipientImage.Image = null;
 			this.RecipientImage.Location = new System.Drawing.Point(30, 30);
 			this.RecipientImage.Name = "RecipientImage";
 			this.RecipientImage.RoundCorners = QubicRed.Corners.All;
@@ -893,9 +895,9 @@
 			this.LoginOverlay.Controls.Add(this.LoginUserNameLabel);
 			this.LoginOverlay.Controls.Add(this.LoginUserName);
 			this.LoginOverlay.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.LoginOverlay.Location = new System.Drawing.Point(2, 32);
+			this.LoginOverlay.Location = new System.Drawing.Point(2, 72);
 			this.LoginOverlay.Name = "LoginOverlay";
-			this.LoginOverlay.Size = new System.Drawing.Size(1276, 734);
+			this.LoginOverlay.Size = new System.Drawing.Size(1276, 694);
 			this.LoginOverlay.TabIndex = 0;
 			this.LoginOverlay.Paint += new System.Windows.Forms.PaintEventHandler(this.LoginOverlay_Paint);
 			// 
@@ -912,7 +914,7 @@
 			// 
 			this.LoginClear.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.LoginClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.LoginClear.Location = new System.Drawing.Point(642, 384);
+			this.LoginClear.Location = new System.Drawing.Point(642, 364);
 			this.LoginClear.Name = "LoginClear";
 			this.LoginClear.Size = new System.Drawing.Size(100, 30);
 			this.LoginClear.TabIndex = 6;
@@ -926,7 +928,7 @@
 			this.LoginButton.Enabled = false;
 			this.LoginButton.FlatAppearance.BorderColor = System.Drawing.Color.Black;
 			this.LoginButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.LoginButton.Location = new System.Drawing.Point(536, 384);
+			this.LoginButton.Location = new System.Drawing.Point(536, 364);
 			this.LoginButton.Name = "LoginButton";
 			this.LoginButton.Size = new System.Drawing.Size(100, 30);
 			this.LoginButton.TabIndex = 5;
@@ -939,7 +941,7 @@
 			this.LoginTitle.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.LoginTitle.AutoSize = true;
 			this.LoginTitle.Font = new System.Drawing.Font("Leelawadee UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-			this.LoginTitle.Location = new System.Drawing.Point(599, 267);
+			this.LoginTitle.Location = new System.Drawing.Point(599, 247);
 			this.LoginTitle.Name = "LoginTitle";
 			this.LoginTitle.Size = new System.Drawing.Size(74, 32);
 			this.LoginTitle.TabIndex = 4;
@@ -949,7 +951,7 @@
 			// 
 			this.LoginPassWordLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.LoginPassWordLabel.AutoSize = true;
-			this.LoginPassWordLabel.Location = new System.Drawing.Point(497, 355);
+			this.LoginPassWordLabel.Location = new System.Drawing.Point(497, 335);
 			this.LoginPassWordLabel.Name = "LoginPassWordLabel";
 			this.LoginPassWordLabel.Size = new System.Drawing.Size(67, 19);
 			this.LoginPassWordLabel.TabIndex = 3;
@@ -960,7 +962,7 @@
 			this.LoginPassWord.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.LoginPassWord.BackColor = System.Drawing.Color.White;
 			this.LoginPassWord.ForeColor = System.Drawing.Color.Black;
-			this.LoginPassWord.Location = new System.Drawing.Point(570, 352);
+			this.LoginPassWord.Location = new System.Drawing.Point(570, 332);
 			this.LoginPassWord.Name = "LoginPassWord";
 			this.LoginPassWord.PasswordChar = '•';
 			this.LoginPassWord.Size = new System.Drawing.Size(207, 26);
@@ -970,7 +972,7 @@
 			// 
 			this.LoginUserNameLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.LoginUserNameLabel.AutoSize = true;
-			this.LoginUserNameLabel.Location = new System.Drawing.Point(493, 323);
+			this.LoginUserNameLabel.Location = new System.Drawing.Point(493, 303);
 			this.LoginUserNameLabel.Name = "LoginUserNameLabel";
 			this.LoginUserNameLabel.Size = new System.Drawing.Size(71, 19);
 			this.LoginUserNameLabel.TabIndex = 1;
@@ -981,7 +983,7 @@
 			this.LoginUserName.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.LoginUserName.BackColor = System.Drawing.Color.White;
 			this.LoginUserName.ForeColor = System.Drawing.Color.Black;
-			this.LoginUserName.Location = new System.Drawing.Point(570, 320);
+			this.LoginUserName.Location = new System.Drawing.Point(570, 300);
 			this.LoginUserName.Name = "LoginUserName";
 			this.LoginUserName.Size = new System.Drawing.Size(207, 26);
 			this.LoginUserName.TabIndex = 0;
@@ -1002,16 +1004,16 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1280, 768);
+			this.Controls.Add(this.LoginOverlay);
 			this.Controls.Add(this.BorderRight);
 			this.Controls.Add(this.ChatContainer);
 			this.Controls.Add(this.SideBar);
-			this.Controls.Add(this.LoginOverlay);
 			this.Name = "Messenger";
-			this.Controls.SetChildIndex(this.LoginOverlay, 0);
 			this.Controls.SetChildIndex(this.SideBar, 0);
 			this.Controls.SetChildIndex(this.ChatContainer, 0);
 			this.Controls.SetChildIndex(this.ExtendedBar, 0);
 			this.Controls.SetChildIndex(this.BorderRight, 0);
+			this.Controls.SetChildIndex(this.LoginOverlay, 0);
 			this.ExtendedBar.ResumeLayout(false);
 			this.ExtendedBar.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.UserPicture)).EndInit();

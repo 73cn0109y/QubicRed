@@ -731,6 +731,12 @@ namespace QubicRed.Apps
 		{
 			ClientSocket.Init();
 
+			if (Environment.User.UserName != null)
+			{
+				LoginUserName.Text = Environment.User.UserName;
+				LoginPassWord.Focus();
+			}
+
 			base.OnShown(e);
 		}
 

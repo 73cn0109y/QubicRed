@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.SideBar = new System.Windows.Forms.Panel();
 			this.User = new System.Windows.Forms.PictureBox();
 			this.Power = new System.Windows.Forms.PictureBox();
@@ -36,21 +37,23 @@
 			this.Apps = new System.Windows.Forms.PictureBox();
 			this.Home = new System.Windows.Forms.PictureBox();
 			this.HomeGroup = new System.Windows.Forms.Panel();
+			this.HomeGroupPrevious = new System.Windows.Forms.Label();
+			this.HomeGroupTitle = new System.Windows.Forms.Label();
+			this.HomeGroupNext = new System.Windows.Forms.Label();
 			this.HomeTitle = new System.Windows.Forms.Label();
 			this.AppsGroup = new System.Windows.Forms.Panel();
+			this.ApplicationsSortIcon = new System.Windows.Forms.PictureBox();
+			this.ApplicationsSort = new System.Windows.Forms.Label();
 			this.ApplicationsTitle = new System.Windows.Forms.Label();
 			this.SearchGroup = new System.Windows.Forms.Panel();
 			this.SearchTitle = new System.Windows.Forms.Label();
 			this.NotificationsGroup = new System.Windows.Forms.Panel();
+			this.NotificationsDeleteAllIcon = new System.Windows.Forms.PictureBox();
+			this.NotificationsDeleteAll = new System.Windows.Forms.Label();
 			this.NotificationsTitle = new System.Windows.Forms.Label();
 			this.UserGroup = new System.Windows.Forms.Panel();
-			this.HomeGroupNext = new System.Windows.Forms.Label();
-			this.HomeGroupTitle = new System.Windows.Forms.Label();
-			this.HomeGroupPrevious = new System.Windows.Forms.Label();
-			this.ApplicationsSort = new System.Windows.Forms.Label();
-			this.ApplicationsSortIcon = new System.Windows.Forms.PictureBox();
-			this.NotificationsDeleteAll = new System.Windows.Forms.Label();
-			this.NotificationsDeleteAllIcon = new System.Windows.Forms.PictureBox();
+			this.appMenu1 = new QubicRed.Components.AppMenu(this.components);
+			this.AppListContainer = new System.Windows.Forms.Panel();
 			this.SideBar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.User)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.Power)).BeginInit();
@@ -60,9 +63,9 @@
 			((System.ComponentModel.ISupportInitialize)(this.Home)).BeginInit();
 			this.HomeGroup.SuspendLayout();
 			this.AppsGroup.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.ApplicationsSortIcon)).BeginInit();
 			this.SearchGroup.SuspendLayout();
 			this.NotificationsGroup.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.ApplicationsSortIcon)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.NotificationsDeleteAllIcon)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -179,6 +182,41 @@
 			this.HomeGroup.Size = new System.Drawing.Size(450, 600);
 			this.HomeGroup.TabIndex = 1;
 			// 
+			// HomeGroupPrevious
+			// 
+			this.HomeGroupPrevious.AutoSize = true;
+			this.HomeGroupPrevious.Cursor = System.Windows.Forms.Cursors.Hand;
+			this.HomeGroupPrevious.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+			this.HomeGroupPrevious.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+			this.HomeGroupPrevious.Location = new System.Drawing.Point(325, 28);
+			this.HomeGroupPrevious.Name = "HomeGroupPrevious";
+			this.HomeGroupPrevious.Size = new System.Drawing.Size(18, 20);
+			this.HomeGroupPrevious.TabIndex = 3;
+			this.HomeGroupPrevious.Text = "<";
+			this.HomeGroupPrevious.MouseClick += new System.Windows.Forms.MouseEventHandler(this.SwitchHomeTab_MouseClick);
+			// 
+			// HomeGroupTitle
+			// 
+			this.HomeGroupTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+			this.HomeGroupTitle.Location = new System.Drawing.Point(349, 30);
+			this.HomeGroupTitle.Name = "HomeGroupTitle";
+			this.HomeGroupTitle.Size = new System.Drawing.Size(65, 17);
+			this.HomeGroupTitle.TabIndex = 2;
+			this.HomeGroupTitle.Text = "Overview";
+			this.HomeGroupTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// HomeGroupNext
+			// 
+			this.HomeGroupNext.AutoSize = true;
+			this.HomeGroupNext.Cursor = System.Windows.Forms.Cursors.Hand;
+			this.HomeGroupNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+			this.HomeGroupNext.Location = new System.Drawing.Point(420, 28);
+			this.HomeGroupNext.Name = "HomeGroupNext";
+			this.HomeGroupNext.Size = new System.Drawing.Size(18, 20);
+			this.HomeGroupNext.TabIndex = 1;
+			this.HomeGroupNext.Text = ">";
+			this.HomeGroupNext.MouseClick += new System.Windows.Forms.MouseEventHandler(this.SwitchHomeTab_MouseClick);
+			// 
 			// HomeTitle
 			// 
 			this.HomeTitle.AutoSize = true;
@@ -192,6 +230,7 @@
 			// AppsGroup
 			// 
 			this.AppsGroup.BackColor = System.Drawing.Color.Transparent;
+			this.AppsGroup.Controls.Add(this.AppListContainer);
 			this.AppsGroup.Controls.Add(this.ApplicationsSortIcon);
 			this.AppsGroup.Controls.Add(this.ApplicationsSort);
 			this.AppsGroup.Controls.Add(this.ApplicationsTitle);
@@ -201,6 +240,25 @@
 			this.AppsGroup.Size = new System.Drawing.Size(450, 600);
 			this.AppsGroup.TabIndex = 2;
 			this.AppsGroup.Visible = false;
+			// 
+			// ApplicationsSortIcon
+			// 
+			this.ApplicationsSortIcon.Location = new System.Drawing.Point(337, 32);
+			this.ApplicationsSortIcon.Name = "ApplicationsSortIcon";
+			this.ApplicationsSortIcon.Size = new System.Drawing.Size(15, 15);
+			this.ApplicationsSortIcon.TabIndex = 4;
+			this.ApplicationsSortIcon.TabStop = false;
+			// 
+			// ApplicationsSort
+			// 
+			this.ApplicationsSort.AutoSize = true;
+			this.ApplicationsSort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+			this.ApplicationsSort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+			this.ApplicationsSort.Location = new System.Drawing.Point(358, 30);
+			this.ApplicationsSort.Name = "ApplicationsSort";
+			this.ApplicationsSort.Size = new System.Drawing.Size(80, 17);
+			this.ApplicationsSort.TabIndex = 3;
+			this.ApplicationsSort.Text = "Sort by A-Z";
 			// 
 			// ApplicationsTitle
 			// 
@@ -246,6 +304,25 @@
 			this.NotificationsGroup.TabIndex = 2;
 			this.NotificationsGroup.Visible = false;
 			// 
+			// NotificationsDeleteAllIcon
+			// 
+			this.NotificationsDeleteAllIcon.Location = new System.Drawing.Point(351, 32);
+			this.NotificationsDeleteAllIcon.Name = "NotificationsDeleteAllIcon";
+			this.NotificationsDeleteAllIcon.Size = new System.Drawing.Size(15, 15);
+			this.NotificationsDeleteAllIcon.TabIndex = 5;
+			this.NotificationsDeleteAllIcon.TabStop = false;
+			// 
+			// NotificationsDeleteAll
+			// 
+			this.NotificationsDeleteAll.AutoSize = true;
+			this.NotificationsDeleteAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+			this.NotificationsDeleteAll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+			this.NotificationsDeleteAll.Location = new System.Drawing.Point(371, 30);
+			this.NotificationsDeleteAll.Name = "NotificationsDeleteAll";
+			this.NotificationsDeleteAll.Size = new System.Drawing.Size(67, 17);
+			this.NotificationsDeleteAll.TabIndex = 4;
+			this.NotificationsDeleteAll.Text = "Delete all";
+			// 
 			// NotificationsTitle
 			// 
 			this.NotificationsTitle.AutoSize = true;
@@ -266,78 +343,19 @@
 			this.UserGroup.TabIndex = 2;
 			this.UserGroup.Visible = false;
 			// 
-			// HomeGroupNext
+			// appMenu1
 			// 
-			this.HomeGroupNext.AutoSize = true;
-			this.HomeGroupNext.Cursor = System.Windows.Forms.Cursors.Hand;
-			this.HomeGroupNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-			this.HomeGroupNext.Location = new System.Drawing.Point(420, 28);
-			this.HomeGroupNext.Name = "HomeGroupNext";
-			this.HomeGroupNext.Size = new System.Drawing.Size(18, 20);
-			this.HomeGroupNext.TabIndex = 1;
-			this.HomeGroupNext.Text = ">";
-			this.HomeGroupNext.MouseClick += new System.Windows.Forms.MouseEventHandler(this.SwitchHomeTab_MouseClick);
+			this.appMenu1.ApplicationContainer = this.AppListContainer;
 			// 
-			// HomeGroupTitle
+			// AppListContainer
 			// 
-			this.HomeGroupTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-			this.HomeGroupTitle.Location = new System.Drawing.Point(349, 30);
-			this.HomeGroupTitle.Name = "HomeGroupTitle";
-			this.HomeGroupTitle.Size = new System.Drawing.Size(65, 17);
-			this.HomeGroupTitle.TabIndex = 2;
-			this.HomeGroupTitle.Text = "Overview";
-			this.HomeGroupTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// HomeGroupPrevious
-			// 
-			this.HomeGroupPrevious.AutoSize = true;
-			this.HomeGroupPrevious.Cursor = System.Windows.Forms.Cursors.Hand;
-			this.HomeGroupPrevious.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-			this.HomeGroupPrevious.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-			this.HomeGroupPrevious.Location = new System.Drawing.Point(325, 28);
-			this.HomeGroupPrevious.Name = "HomeGroupPrevious";
-			this.HomeGroupPrevious.Size = new System.Drawing.Size(18, 20);
-			this.HomeGroupPrevious.TabIndex = 3;
-			this.HomeGroupPrevious.Text = "<";
-			this.HomeGroupPrevious.MouseClick += new System.Windows.Forms.MouseEventHandler(this.SwitchHomeTab_MouseClick);
-			// 
-			// ApplicationsSort
-			// 
-			this.ApplicationsSort.AutoSize = true;
-			this.ApplicationsSort.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-			this.ApplicationsSort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-			this.ApplicationsSort.Location = new System.Drawing.Point(358, 30);
-			this.ApplicationsSort.Name = "ApplicationsSort";
-			this.ApplicationsSort.Size = new System.Drawing.Size(80, 17);
-			this.ApplicationsSort.TabIndex = 3;
-			this.ApplicationsSort.Text = "Sort by A-Z";
-			// 
-			// ApplicationsSortIcon
-			// 
-			this.ApplicationsSortIcon.Location = new System.Drawing.Point(337, 32);
-			this.ApplicationsSortIcon.Name = "ApplicationsSortIcon";
-			this.ApplicationsSortIcon.Size = new System.Drawing.Size(15, 15);
-			this.ApplicationsSortIcon.TabIndex = 4;
-			this.ApplicationsSortIcon.TabStop = false;
-			// 
-			// NotificationsDeleteAll
-			// 
-			this.NotificationsDeleteAll.AutoSize = true;
-			this.NotificationsDeleteAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-			this.NotificationsDeleteAll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-			this.NotificationsDeleteAll.Location = new System.Drawing.Point(371, 30);
-			this.NotificationsDeleteAll.Name = "NotificationsDeleteAll";
-			this.NotificationsDeleteAll.Size = new System.Drawing.Size(67, 17);
-			this.NotificationsDeleteAll.TabIndex = 4;
-			this.NotificationsDeleteAll.Text = "Delete all";
-			// 
-			// NotificationsDeleteAllIcon
-			// 
-			this.NotificationsDeleteAllIcon.Location = new System.Drawing.Point(351, 32);
-			this.NotificationsDeleteAllIcon.Name = "NotificationsDeleteAllIcon";
-			this.NotificationsDeleteAllIcon.Size = new System.Drawing.Size(15, 15);
-			this.NotificationsDeleteAllIcon.TabIndex = 5;
-			this.NotificationsDeleteAllIcon.TabStop = false;
+			this.AppListContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.AppListContainer.Location = new System.Drawing.Point(0, 60);
+			this.AppListContainer.Name = "AppListContainer";
+			this.AppListContainer.Size = new System.Drawing.Size(450, 540);
+			this.AppListContainer.TabIndex = 5;
 			// 
 			// StartMenu
 			// 
@@ -345,9 +363,9 @@
 			this.BackColor = System.Drawing.Color.Black;
 			this.ClientSize = new System.Drawing.Size(500, 600);
 			this.ControlBox = false;
+			this.Controls.Add(this.AppsGroup);
 			this.Controls.Add(this.HomeGroup);
 			this.Controls.Add(this.NotificationsGroup);
-			this.Controls.Add(this.AppsGroup);
 			this.Controls.Add(this.SearchGroup);
 			this.Controls.Add(this.UserGroup);
 			this.Controls.Add(this.SideBar);
@@ -376,11 +394,11 @@
 			this.HomeGroup.PerformLayout();
 			this.AppsGroup.ResumeLayout(false);
 			this.AppsGroup.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.ApplicationsSortIcon)).EndInit();
 			this.SearchGroup.ResumeLayout(false);
 			this.SearchGroup.PerformLayout();
 			this.NotificationsGroup.ResumeLayout(false);
 			this.NotificationsGroup.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.ApplicationsSortIcon)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.NotificationsDeleteAllIcon)).EndInit();
 			this.ResumeLayout(false);
 
@@ -411,5 +429,7 @@
 		private System.Windows.Forms.PictureBox ApplicationsSortIcon;
 		private System.Windows.Forms.PictureBox NotificationsDeleteAllIcon;
 		private System.Windows.Forms.Label NotificationsDeleteAll;
+		private Components.AppMenu appMenu1;
+		private System.Windows.Forms.Panel AppListContainer;
 	}
 }

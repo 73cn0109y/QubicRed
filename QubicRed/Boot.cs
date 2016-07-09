@@ -21,7 +21,7 @@ namespace QubicRed
 
 			Task.Run(async () =>
 			{
-				await login.Init();
+				await login.LoadAsync();
 				FadeOut();
 			});
 		}

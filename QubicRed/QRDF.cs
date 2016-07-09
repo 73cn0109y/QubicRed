@@ -8,6 +8,7 @@ namespace QubicRed
 	public partial class QRDF : Form
 	{
 		public new string Text { get { return Title.Text; } set { Title.Text = value; } }
+		public new Image Icon { get; set; }
 
 		public Color AppColor
 		{

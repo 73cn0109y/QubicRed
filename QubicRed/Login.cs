@@ -19,11 +19,9 @@ namespace QubicRed
 
 			Location = Screen.AllScreens[i].Bounds.Location;
 			Size = Screen.AllScreens[i].Bounds.Size;
-
-			Environment.User.CurrentUser = "Test";
 		}
 
-		public async Task Init()
+		public async Task LoadAsync()
 		{
 			await LoadSettings();
 
@@ -76,8 +74,10 @@ namespace QubicRed
 				UserSettings.Add(name, value);
 			}
 
-			Environment.User.CurrentUser = UserSettings["username"].ToString();
+			Environment.User.UserName = UserSettings["username"].ToString();
 			Environment.User.RealName = UserSettings["realname"].ToString();
+			Environment.User.Wallpaper = UserSettings["wallpaper"].ToString();
+			Environment.User.Avatar = UserSettings["avatar"].ToString();
 
 			return;
 		}
@@ -91,7 +91,7 @@ namespace QubicRed
 
 				Task.Run(async () =>
 				{
-					await desktop.LoadAsync(UserSettings);
+					await desktop.LoadAsync();
 					FadeOut();
 				});
 			}

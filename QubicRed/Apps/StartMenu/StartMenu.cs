@@ -10,8 +10,6 @@ namespace QubicRed.Apps
 {
 	public partial class StartMenu : Form
 	{
-		public Dictionary<string, object> UserSettings { get; protected set; }
-
 		private bool togglingVisible = false;
 		private Taskbar taskbar;
 		private bool canLooseFocus = false;
@@ -37,15 +35,13 @@ namespace QubicRed.Apps
 			}
 		}
 
-		public async Task LoadAsync(Dictionary<string, object> userSettings)
+		public async Task LoadAsync()
 		{
 			Point originPoint = Location;
 			Invoke(new MethodInvoker(() => { Location = new Point(-int.MaxValue, -int.MaxValue); }));
 
-			UserSettings = userSettings;
-
-			string wallpaper = UserSettings["wallpaper"].ToString();
-			if (!File.Exists(UserSettings["wallpaper"].ToString()))
+			string wallpaper = Environment.User.Wallpaper;
+			if (!File.Exists(wallpaper))
 				wallpaper = Environment.System.Wallpapers + wallpaper;
 			if (!File.Exists(wallpaper))
 				return;
@@ -56,7 +52,7 @@ namespace QubicRed.Apps
 				int read;
 				while ((read = await file.ReadAsync(buffer, 0, buffer.Length)) != 0)
 					await stream.WriteAsync(buffer, 0, read);
-				using (Bitmap bmp = new Bitmap(Image.FromStream(stream)).Clone(new Rectangle(originPoint.X, originPoint.Y, Width, Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
+				using (Bitmap bmp = new Bitmap(Image.FromStream(stream).ResizeKeepRatio(Screen.AllScreens[taskbar.ScreenPoint].Bounds.Size)).Clone(new Rectangle(originPoint.X, originPoint.Y, Width, Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
 				using (TextureBrush textureBrush = new TextureBrush(Image.FromFile("C:/QubicRed/System/Wallpapers/StartmenuDarken.png"), WrapMode.Tile))
 				using (Graphics g = Graphics.FromImage(bmp))
 				{
@@ -64,6 +60,8 @@ namespace QubicRed.Apps
 					BackgroundImage = bmp.Clone() as Image;
 				}
 			}
+
+			appMenu1.Load();
 
 			Invoke(new MethodInvoker(() =>
 			{
@@ -80,6 +78,20 @@ namespace QubicRed.Apps
 				return;
 			if (!TopMost)
 				TopMost = true;
+
+			Invoke(new MethodInvoker(() =>
+			{
+				if (SelectedTab.Name != "Home")
+				{
+					PictureBox old = SelectedTab;
+					SelectedTab = Home;
+					old.Invalidate();
+					SelectedTab.Invalidate();
+					Controls[old.Name + "Group"].Hide();
+					Controls[SelectedTab.Name + "Group"].Show();
+				}
+			}));
+
 			Task.Run(() =>
 			{
 				togglingVisible = true;
@@ -109,16 +121,6 @@ namespace QubicRed.Apps
 						Focus();
 						Activate();
 					}
-
-					if (SelectedTab.Name != "Home")
-					{
-						PictureBox old = SelectedTab;
-						SelectedTab = Home;
-						old.Invalidate();
-						SelectedTab.Invalidate();
-						Controls[old.Name + "Group"].Hide();
-						Controls[SelectedTab.Name + "Group"].Show();
-					}
 				}));
 				togglingVisible = false;
 			});
@@ -146,7 +148,7 @@ namespace QubicRed.Apps
 				PictureBox old = SelectedTab;
 				SelectedTab = sender as PictureBox;
 				old.Invalidate();
-				Controls[old.Name + "Group"].Hide();
+				Controls[old.Name + "Group"]?.Hide();
 			}
 			else
 				SelectedTab = sender as PictureBox;
@@ -157,8 +159,7 @@ namespace QubicRed.Apps
 
 		protected override void OnLostFocus(EventArgs e)
 		{
-			if(Cursor.Position.Y < taskbar.Location.Y && canLooseFocus)
-				ToggleVisible(true);
+			ToggleVisible(true);
 
 			base.OnLostFocus(e);
 		}

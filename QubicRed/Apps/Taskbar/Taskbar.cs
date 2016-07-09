@@ -9,13 +9,15 @@ namespace QubicRed.Apps
 {
 	public partial class Taskbar : Form
 	{
-		public Dictionary<string, object> UserSettings { get; protected set; }
-		public Apps.StartMenu StartMenu { get; protected set; }
+		public StartMenu StartMenu { get; protected set; }
+		public int ScreenPoint { get; protected set; }
 
 		private System.Timers.Timer TimeKeeper;
 
 		public Taskbar(int i = 0)
 		{
+			ScreenPoint = i;
+
 			InitializeComponent();
 
 			Size = new Size(Screen.AllScreens[i].Bounds.Width, Height);
@@ -30,12 +32,10 @@ namespace QubicRed.Apps
 			TimeKeeper.Start();
 		}
 
-		public async Task LoadAsync(Dictionary<string, object> userSettings)
+		public async Task LoadAsync()
 		{
-			UserSettings = userSettings;
-
-			string wallpaper = UserSettings["wallpaper"].ToString();
-			if (!File.Exists(UserSettings["wallpaper"].ToString()))
+			string wallpaper = Environment.User.Wallpaper;
+			if (!File.Exists(Environment.User.Wallpaper))
 				wallpaper = Environment.System.Wallpapers + wallpaper;
 			if (!File.Exists(wallpaper))
 				return;
@@ -46,7 +46,7 @@ namespace QubicRed.Apps
 				int read;
 				while ((read = await file.ReadAsync(buffer, 0, buffer.Length)) != 0)
 					await stream.WriteAsync(buffer, 0, read);
-				using (Bitmap bmp = new Bitmap(Image.FromStream(stream)).Clone(new Rectangle(Location.X, Location.Y, Width, Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
+				using (Bitmap bmp = new Bitmap(Image.FromStream(stream).ResizeKeepRatio(Screen.AllScreens[ScreenPoint].Bounds.Size)).Clone(new Rectangle(Location.X, Location.Y, Width, Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
 				using (TextureBrush textureBrush = new TextureBrush(Image.FromFile("C:/QubicRed/System/Wallpapers/TaskbarDarken.png"), System.Drawing.Drawing2D.WrapMode.Tile))
 				using (Graphics g = Graphics.FromImage(bmp))
 				{
@@ -55,9 +55,9 @@ namespace QubicRed.Apps
 				}
 			}
 
-			StartButton.Image = Image.FromFile(Environment.User.UserDirectory + UserSettings["avatar"].ToString());
+			StartButton.Image = Image.FromFile(Environment.User.UserDirectory + Environment.User.Avatar);
 
-			await StartMenu.LoadAsync(UserSettings);
+			await StartMenu.LoadAsync();
 
 			return;
 		}

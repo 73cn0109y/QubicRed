@@ -51,6 +51,16 @@ namespace QubicRed
 			return default(Rectangle);
 		}
 
+		public static string LocalFileFromURL(this string url)
+		{
+			if (File.Exists(url))
+				return url;
+
+			string localFile = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase), "Cached", "Images", Path.GetFileName(url));
+			localFile = localFile.Substring(6, localFile.Length - 6);
+			return localFile;
+		}
+
 		public static Image DownloadImage(this string url, Size size)
 		{
 			if (url == null)
