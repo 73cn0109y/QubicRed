@@ -87,6 +87,12 @@
     <Compile Include="Apps\Messenger\Messenger.Designer.cs">
       <DependentUpon>Messenger.cs</DependentUpon>
     </Compile>
+    <Compile Include="Apps\Sidebar\Sidebar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Apps\Sidebar\Sidebar.Designer.cs">
+      <DependentUpon>Sidebar.cs</DependentUpon>
+    </Compile>
     <Compile Include="Apps\StartMenu\StartMenu.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -166,6 +172,9 @@
     <Compile Include="Win32.cs" />
     <EmbeddedResource Include="Apps\Messenger\Messenger.resx">
       <DependentUpon>Messenger.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Apps\Sidebar\Sidebar.resx">
+      <DependentUpon>Sidebar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Apps\StartMenu\StartMenu.resx">
       <DependentUpon>StartMenu.cs</DependentUpon>

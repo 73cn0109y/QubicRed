@@ -33,6 +33,7 @@
 			this.UserGroup = new System.Windows.Forms.Panel();
 			this.LoginButton = new System.Windows.Forms.Button();
 			this.PasswordField = new QubicRed.CustomControls.CustomizableTextBox();
+			this.Copyright = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.UserAvatar)).BeginInit();
 			this.UserGroup.SuspendLayout();
 			this.SuspendLayout();
@@ -95,12 +96,24 @@
 			this.PasswordField.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.PasswordField.Submit += new QubicRed.CustomControls.CustomizableTextBox.OnSubmit(this.customizableTextBox1_Submit);
 			// 
+			// Copyright
+			// 
+			this.Copyright.AutoSize = true;
+			this.Copyright.BackColor = System.Drawing.Color.Transparent;
+			this.Copyright.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+			this.Copyright.Location = new System.Drawing.Point(12, 9);
+			this.Copyright.Name = "Copyright";
+			this.Copyright.Size = new System.Drawing.Size(98, 18);
+			this.Copyright.TabIndex = 3;
+			this.Copyright.Text = "Qubic Red\r\nOriginal concept by Lukeled\r\n";
+			// 
 			// Login
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Black;
 			this.ClientSize = new System.Drawing.Size(1024, 768);
 			this.ControlBox = false;
+			this.Controls.Add(this.Copyright);
 			this.Controls.Add(this.UserGroup);
 			this.DoubleBuffered = true;
 			this.ForeColor = System.Drawing.Color.White;
@@ -116,6 +129,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.UserAvatar)).EndInit();
 			this.UserGroup.ResumeLayout(false);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -126,5 +140,6 @@
 		private System.Windows.Forms.Panel UserGroup;
 		private CustomControls.CustomizableTextBox PasswordField;
 		private System.Windows.Forms.Button LoginButton;
+		private System.Windows.Forms.Label Copyright;
 	}
 }

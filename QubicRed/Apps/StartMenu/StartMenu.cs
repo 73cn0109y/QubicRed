@@ -10,9 +10,10 @@ namespace QubicRed.Apps
 {
 	public partial class StartMenu : Form
 	{
+		public bool CanLooseFocus { get; set; } = false;
+
 		private bool togglingVisible = false;
 		private Taskbar taskbar;
-		private bool canLooseFocus = false;
 		private PictureBox SelectedTab;
 
 		public StartMenu(Taskbar _taskbar)
@@ -52,7 +53,7 @@ namespace QubicRed.Apps
 				int read;
 				while ((read = await file.ReadAsync(buffer, 0, buffer.Length)) != 0)
 					await stream.WriteAsync(buffer, 0, read);
-				using (Bitmap bmp = new Bitmap(Image.FromStream(stream).ResizeKeepRatio(Screen.AllScreens[taskbar.ScreenPoint].Bounds.Size)).Clone(new Rectangle(originPoint.X, originPoint.Y, Width, Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
+				using (Bitmap bmp = new Bitmap(Image.FromStream(stream), taskbar.Desktop.Size).Clone(new Rectangle(originPoint.X, originPoint.Y, Width, Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
 				using (TextureBrush textureBrush = new TextureBrush(Image.FromFile("C:/QubicRed/System/Wallpapers/StartmenuDarken.png"), WrapMode.Tile))
 				using (Graphics g = Graphics.FromImage(bmp))
 				{
@@ -69,7 +70,7 @@ namespace QubicRed.Apps
 				Location = originPoint;
 			}));
 
-			canLooseFocus = true;
+			CanLooseFocus = true;
 		}
 
 		public void ToggleVisible(bool forceHide = false)
@@ -159,7 +160,8 @@ namespace QubicRed.Apps
 
 		protected override void OnLostFocus(EventArgs e)
 		{
-			ToggleVisible(true);
+			if (Cursor.Position.Y < taskbar.Location.Y && CanLooseFocus)
+				ToggleVisible(true);
 
 			base.OnLostFocus(e);
 		}

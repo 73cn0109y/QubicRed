@@ -9,13 +9,15 @@ namespace QubicRed.Apps
 {
 	public partial class Taskbar : Form
 	{
+		public Desktop Desktop { get; protected set; }
 		public StartMenu StartMenu { get; protected set; }
 		public int ScreenPoint { get; protected set; }
 
 		private System.Timers.Timer TimeKeeper;
 
-		public Taskbar(int i = 0)
+		public Taskbar(Desktop desktop, int i = 0)
 		{
+			Desktop = desktop;
 			ScreenPoint = i;
 
 			InitializeComponent();
@@ -46,7 +48,7 @@ namespace QubicRed.Apps
 				int read;
 				while ((read = await file.ReadAsync(buffer, 0, buffer.Length)) != 0)
 					await stream.WriteAsync(buffer, 0, read);
-				using (Bitmap bmp = new Bitmap(Image.FromStream(stream).ResizeKeepRatio(Screen.AllScreens[ScreenPoint].Bounds.Size)).Clone(new Rectangle(Location.X, Location.Y, Width, Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
+				using (Bitmap bmp = new Bitmap(Image.FromStream(stream), Desktop.Size).Clone(new Rectangle(Location.X, Location.Y, Width, Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
 				using (TextureBrush textureBrush = new TextureBrush(Image.FromFile("C:/QubicRed/System/Wallpapers/TaskbarDarken.png"), System.Drawing.Drawing2D.WrapMode.Tile))
 				using (Graphics g = Graphics.FromImage(bmp))
 				{
@@ -85,6 +87,19 @@ namespace QubicRed.Apps
 		private void StartButton_MouseClick(object sender, MouseEventArgs e)
 		{
 			StartMenu.ToggleVisible();
+		}
+
+		protected override void OnLostFocus(EventArgs e)
+		{
+			if (StartMenu.Visible && StartMenu.CanLooseFocus)
+				StartMenu.ToggleVisible(true);
+
+			base.OnLostFocus(e);
+		}
+
+		private void DateTime_MouseClick(object sender, MouseEventArgs e)
+		{
+			Desktop.Sidebar.ToggleVisible();
 		}
 	}
 }

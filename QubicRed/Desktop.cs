@@ -11,6 +11,7 @@ namespace QubicRed
 	public partial class Desktop : Form
 	{
 		public Apps.Taskbar Taskbar { get; protected set; }
+		public Apps.Sidebar Sidebar { get; protected set; }
 
 		public Desktop(int i = 0)
 		{
@@ -21,8 +22,11 @@ namespace QubicRed
 			Location = Screen.AllScreens[i].Bounds.Location;
 			Size = Screen.AllScreens[i].Bounds.Size;
 
-			Taskbar = new Apps.Taskbar(i);
+			Taskbar = new Apps.Taskbar(this, i);
 			Taskbar.Show();
+
+			Sidebar = new Apps.Sidebar(this);
+			Sidebar.Show();
 		}
 
 		public async Task LoadAsync()
@@ -30,6 +34,8 @@ namespace QubicRed
 			await LoadWallpaper(Environment.User.Wallpaper);
 
 			await Taskbar.LoadAsync();
+
+			await Sidebar.LoadAsync();
 
 			return;
 		}
@@ -47,7 +53,7 @@ namespace QubicRed
 				int read;
 				while ((read = await file.ReadAsync(buffer, 0, buffer.Length)) != 0)
 					await stream.WriteAsync(buffer, 0, read);
-				using (Bitmap bmp = new Bitmap(Image.FromStream(stream).ResizeKeepRatio(Size)).Clone(ClientRectangle, System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
+				using (Bitmap bmp = new Bitmap(Image.FromStream(stream), Size).Clone(ClientRectangle, System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
 					BackgroundImage = bmp.Clone() as Image;
 			}
 

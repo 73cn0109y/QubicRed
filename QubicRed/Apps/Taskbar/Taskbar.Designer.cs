@@ -45,6 +45,7 @@
 			this.Time.TabIndex = 1;
 			this.Time.Text = "00:00 PM";
 			this.Time.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.Time.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DateTime_MouseClick);
 			// 
 			// Date
 			// 
@@ -57,12 +58,14 @@
 			this.Date.TabIndex = 2;
 			this.Date.Text = "Wednesday 00";
 			this.Date.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.Date.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DateTime_MouseClick);
 			// 
 			// StartButton
 			// 
 			this.StartButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.StartButton.BackColor = System.Drawing.Color.Transparent;
+			this.StartButton.Image = null;
 			this.StartButton.Location = new System.Drawing.Point(5, 5);
 			this.StartButton.Name = "StartButton";
 			this.StartButton.RoundCorners = QubicRed.Corners.All;
